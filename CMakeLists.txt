@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23 FATAL_ERROR)
-project(OpenGL_Template)
+project(Project-VR)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -55,6 +55,28 @@ include_directories(
 # Project files
 set(PROJECT-SRC
         main.cpp
+        src/stl/std_image.cpp
+
+        src/components/Camera.h
+        src/components/DeltaTime.h
+        src/components/Position.h
+        src/components/Renderable.h
+        src/components/RotateAnimation.h
+
+        src/engine/Mesh.h src/engine/Mesh.cpp
+        src/engine/Renderer.h src/engine/Renderer.cpp
+        src/engine/Shader.h src/engine/Shader.cpp
+        src/engine/Texture2D.h src/engine/Texture2D.cpp
+        src/engine/Window.h src/engine/Window.cpp
+
+        src/prefabs/CameraPrefab.h src/prefabs/CameraPrefab.cpp
+        src/prefabs/CubePrefab.h src/prefabs/CubePrefab.cpp
+
+        src/scenes/Scene.h src/scenes/Scene.cpp
+
+        src/systems/CameraSystem.h src/systems/CameraSystem.cpp
+        src/systems/DrawSystem.h src/systems/DrawSystem.cpp
+        src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         )
 
 # Project building

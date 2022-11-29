@@ -1,40 +1,25 @@
-/**
- * Example code taken from https://www.glfw.org/documentation.html on [19 nov
- * 2022]
- */
+#include "engine/Renderer.h"
+#include "scenes/Scene.h"
+#include "engine/Window.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <iostream>
 
-int main(void) {
-  GLFWwindow *window;
+int main() {
+  std::cout << "Starting program" << std::endl;
 
-  /* Initialize the library */
-  if (!glfwInit())
-    return -1;
+  auto window = engine::Window(800, 600, std::string{"Hello world"});
 
-  /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-  if (!window) {
-    glfwTerminate();
-    return -1;
-  }
+  engine::Renderer renderer{};
+  scenes::Scene scene{renderer};
+  window.loop([&](uint64_t deltaTime) {
+    scene.update(deltaTime);
+    {
+      auto renderGuard = renderer.startRender();
+      scene.render(renderGuard);
+    };
 
-  /* Make the window's context current */
-  glfwMakeContextCurrent(window);
+    renderer.render();
+  });
 
-  /* Loop until the user closes the window */
-  while (!glfwWindowShouldClose(window)) {
-    /* Render here */
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    /* Swap front and back buffers */
-    glfwSwapBuffers(window);
-
-    /* Poll for and process events */
-    glfwPollEvents();
-  }
-
-  glfwTerminate();
   return 0;
 }
