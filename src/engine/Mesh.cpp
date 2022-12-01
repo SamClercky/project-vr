@@ -2,12 +2,10 @@
 
 using namespace engine;
 
- Mesh::Mesh(std::vector<float> &&vertexData, bool containsTexture)
-     : Mesh(std::move(vertexData), std::move(std::vector<float>{}),
-            containsTexture) {}
+ Mesh::Mesh(std::vector<Vertex> &&vertexData)
+     : Mesh(std::move(vertexData), std::move(std::vector<uint32_t>{})) {}
 
- Mesh::Mesh(std::vector<float> &&vertexData, std::vector<float> &&eboData,
-            bool containsTexture)
+ Mesh::Mesh(std::vector<Vertex> &&vertexData, std::vector<uint32_t> &&eboData)
      : vertexData(vertexData), eboData(eboData) {
    GLuint VAO, VBO, EBO;
 
@@ -21,23 +19,21 @@ using namespace engine;
    glBindVertexArray(VAO);
 
    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexData.size(),
+   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexData.size(),
                 vertexData.data(), GL_STATIC_DRAW);
 
-   GLsizei stride = 3 * sizeof(float); // only 3 floats for position
-   if (containsTexture)
-     stride = 5 * sizeof(float); // add extra 2 floats for texture coords
    glEnableVertexAttribArray(0);
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, nullptr);
-   if (containsTexture) {
-     glEnableVertexAttribArray(1);
-     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride,
-                           (void *)(3 * sizeof(float)));
-   }
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
+   glEnableVertexAttribArray(1);
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                         (void *)offsetof(Vertex, normal));
+   glEnableVertexAttribArray(2);
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                         (void *)offsetof(Vertex, texCoord));
 
    if (!eboData.empty()) {
      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * eboData.size(),
+     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * eboData.size(),
                   eboData.data(), GL_STATIC_DRAW);
    }
 
