@@ -26,8 +26,7 @@ Scene::Scene(engine::Renderer &renderer) : m_registry(entt::registry{}) {
 }
 
 void Scene::update(uint64_t deltaTime) {
-  m_registry.ctx().erase<components::DeltaTime>();
-  m_registry.ctx().emplace<components::DeltaTime>(deltaTime);
+  m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
   systems::rotateSystem(m_registry);
 }
 
