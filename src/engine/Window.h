@@ -12,6 +12,11 @@ namespace engine {
 
 class Window {
 public:
+
+  enum class ButtonDirections {
+    Up, Down, Right, Left
+  };
+
   Window(int width, int height, std::string &&title);
   ~Window();
   void make_current();
@@ -19,7 +24,7 @@ public:
   void loop(std::function<void(const uint64_t)> callback);
 
   // true if pressed
-  bool is_key_pressed(int glfw_key);
+  bool is_key_pressed(ButtonDirections key);
   // Get current cursor position `out &out_position` and returned bool is
   // if_changed
   bool get_cursor_position(glm::vec2 &out_position);

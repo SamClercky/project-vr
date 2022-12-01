@@ -180,8 +180,13 @@ void Window::loop(std::function<void(const uint64_t)> callback) {
     glfwPollEvents();
   }
 }
-bool Window::is_key_pressed(int glfw_key) {
-  return glfwGetKey(m_window, glfw_key) == GLFW_PRESS;
+bool Window::is_key_pressed(Window::ButtonDirections key) {
+  switch (key) {
+  case Window::ButtonDirections::Up: return glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS;
+  case Window::ButtonDirections::Down: return glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS;
+  case Window::ButtonDirections::Left: return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS;
+  case Window::ButtonDirections::Right: return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS;
+  }
 }
 bool Window::get_cursor_position(glm::vec2 &out_position) {
   double x, y;
