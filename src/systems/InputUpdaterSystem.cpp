@@ -32,8 +32,9 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
       auto rotated_delta_pos = toCamDirectionTrans * delta_pos;
       cam.position += rotated_delta_pos*((float)dt.dt/1000);
 
-      glm::mat4 lookRotation = glm::rotate(glm::mat4{1.f}, -mouse_position.y*((float)dt.dt/1000), glm::vec3{1.f, 0.f, 0.f});
+      glm::mat4 lookRotation{1.f};
       lookRotation = glm::rotate(lookRotation, -mouse_position.x*((float)dt.dt/1000), glm::vec3{0.f, 1.f, 0.f});
+      lookRotation = glm::rotate(lookRotation, -mouse_position.y*((float)dt.dt/1000), glm::vec3{0.f, 0.f, 1.f});
       cam.lookDirection = glm::mat3{lookRotation} * cam.lookDirection;
     });
   }

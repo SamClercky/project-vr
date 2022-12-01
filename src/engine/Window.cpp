@@ -6,6 +6,7 @@ using namespace engine;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+float get_joystick_value(int glfw_joystick, unsigned int axis);
 
 // Debug setup code from exercises
 #ifndef NDEBUG
@@ -182,19 +183,27 @@ void Window::loop(std::function<void(const uint64_t)> callback) {
 }
 bool Window::is_key_pressed(Window::ButtonDirections key) {
   switch (key) {
-  case Window::ButtonDirections::Up: return glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS;
-  case Window::ButtonDirections::Down: return glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS;
-  case Window::ButtonDirections::Left: return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS;
-  case Window::ButtonDirections::Right: return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS;
+  case Window::ButtonDirections::Up: return (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f);
+  case Window::ButtonDirections::Down: return glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 1) > .5f);
+  case Window::ButtonDirections::Left: return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f);
+  case Window::ButtonDirections::Right: return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
   }
 }
+
 bool Window::get_cursor_position(glm::vec2 &out_position) {
   double x, y;
   glfwGetCursorPos(m_window, &x, &y);
 
-  auto new_position = glm::vec2{x,y};
-  auto did_change = new_position != m_mouse_position;
+  float joy_x, joy_y;
+  joy_x = get_joystick_value(GLFW_JOYSTICK_1, 2)*1.5f;
+  joy_y = get_joystick_value(GLFW_JOYSTICK_1, 3)*1.5f;
+
+  auto new_position = glm::vec2{(float)x, (float)y};
+  auto did_change = new_position != m_mouse_position || abs(joy_x) >= .1f || abs(joy_y) >= .1f;
   out_position = new_position - m_mouse_position;
+
+  out_position.x += joy_x;
+  out_position.y += joy_y;
 
   m_mouse_position = new_position;
 
@@ -208,4 +217,13 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+}
+
+float get_joystick_value(int glfw_joystick, unsigned int axis) {
+  if (!glfwJoystickPresent(glfw_joystick))
+    return 0.f;
+
+  int count;
+  const float* inputs = glfwGetJoystickAxes(glfw_joystick, &count);
+  return count > axis ? *(inputs + axis) : 0.f;
 }
