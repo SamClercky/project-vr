@@ -12,8 +12,18 @@ namespace components {
 
 struct Camera {
   glm::mat4 perspective;
+  glm::vec3 lookDirection;
+  glm::vec3 worldUp;
+  glm::vec3 position;
 
-  Camera(float width, float height) {
+  Camera(float width, float height)
+      : lookDirection(glm::vec3{1.f, 0.f, 0.f}),
+        worldUp(glm::vec3{0.f, 1.f, 0.f}),
+        position(glm::vec3{0.f,0.f,0.f}) {
+    update_perspective(width, height);
+  }
+
+  void update_perspective(float width, float height) {
     perspective =
         glm::perspective(glm::radians(45.0f), width / height, .1f, 100.f);
   }

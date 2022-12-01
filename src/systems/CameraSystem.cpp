@@ -5,11 +5,13 @@
 namespace systems {
 
 void cameraSystem(engine::Renderer::RenderGuard &renderer, entt::registry &registry) {
-  auto view = registry.view<components::Camera, components::Position>();
+  auto view = registry.view<components::Camera>();
   for (auto &cameraEntity : view) {
+    auto &cam = view.get<components::Camera>(cameraEntity);
     renderer.submit_camera(
-        view.get<components::Camera>(cameraEntity).perspective,
-        view.get<components::Position>(cameraEntity).pos);
+        cam.perspective,
+        glm::lookAt(cam.position, cam.position + cam.lookDirection, cam.worldUp)
+    );
   }
 }
 

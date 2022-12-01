@@ -10,7 +10,7 @@ int main() {
   auto window = engine::Window(800, 600, std::string{"Hello world"});
 
   engine::Renderer renderer{};
-  scenes::Scene scene{renderer};
+  scenes::Scene scene{window, renderer};
   window.loop([&](uint64_t deltaTime) {
     scene.update(deltaTime);
     {

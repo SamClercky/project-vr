@@ -17,6 +17,18 @@ struct Position {
     pos = glm::mat4{rotation};
     pos = glm::translate(pos, translation);
   }
+
+  glm::mat3 get_rotation() {
+    return glm::mat3{
+        glm::vec3{pos[0]},
+        glm::vec3{pos[1]},
+        glm::vec3{pos[2]},
+    };
+  }
+
+  glm::vec3 get_translation() {
+    return glm::vec3{pos[3]};
+  }
 };
 
 } // namespace components

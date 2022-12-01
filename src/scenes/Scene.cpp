@@ -4,11 +4,12 @@
 #include "prefabs/CubePrefab.h"
 #include "systems/CameraSystem.h"
 #include "systems/DrawSystem.h"
+#include "systems/InputUpdaterSystem.h"
 #include "systems/RotateSystem.h"
 
 using namespace scenes;
 
-Scene::Scene(engine::Renderer &renderer) : m_registry(entt::registry{}) {
+Scene::Scene(engine::Window& window, engine::Renderer &renderer) : m_registry(entt::registry{}), m_window_ref(window) {
   glm::vec3 cubePositions[] = {
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
       glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -27,6 +28,7 @@ Scene::Scene(engine::Renderer &renderer) : m_registry(entt::registry{}) {
 
 void Scene::update(uint64_t deltaTime) {
   m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
+  systems::inputUpdaterSystem(m_registry, m_window_ref);
   systems::rotateSystem(m_registry);
 }
 

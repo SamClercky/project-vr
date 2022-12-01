@@ -76,6 +76,7 @@ set(PROJECT-SRC
 
         src/systems/CameraSystem.h src/systems/CameraSystem.cpp
         src/systems/DrawSystem.h src/systems/DrawSystem.cpp
+        src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         )
 

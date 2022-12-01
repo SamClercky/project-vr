@@ -106,8 +106,8 @@ Window::Window(int width, int height, std::string &&title) {
 #endif
 
   // Create the window
-  window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-  if (window == nullptr) {
+  m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+  if (m_window == nullptr) {
     glfwTerminate();
     throw std::runtime_error("Failed to create GLFW window\n");
   }
@@ -133,49 +133,67 @@ Window::Window(int width, int height, std::string &&title) {
 
   // update viewport size
   glViewport(0, 0, width, height);
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+  glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 
   // enable Z-buffer
   glEnable(GL_DEPTH_TEST);
+
+  // set input settings
+  glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Window::make_current() {
-  if (window != nullptr) {
-    glfwMakeContextCurrent(window);
+  if (m_window != nullptr) {
+    glfwMakeContextCurrent(m_window);
   } else {
     throw std::runtime_error("Window not constructed (nullptr)");
   }
 }
 
 Window::~Window() {
-  glfwDestroyWindow(window);
-  window = nullptr; // make sure no dangling pointers
+  glfwDestroyWindow(m_window);
+  m_window = nullptr; // make sure no dangling pointers
   glfwTerminate();
 }
 
 void Window::set_title(std::string &&title) {
-  glfwSetWindowTitle(window, title.c_str());
+  glfwSetWindowTitle(m_window, title.c_str());
 }
 void Window::loop(std::function<void(const uint64_t)> callback) {
   auto prevTime = (uint64_t)(glfwGetTime() * 1000.0);
 
   // vsync
   glfwSwapInterval(1);
-  while (!glfwWindowShouldClose(window)) {
+  while (!glfwWindowShouldClose(m_window)) {
     // update delta
     auto currTime = (uint64_t)(glfwGetTime() * 1000.0);
     auto delta = currTime - prevTime;
     prevTime = currTime;
 
-    processInput(window);
+    processInput(m_window);
 
     // draw OpenGL
     callback(delta);
 
     // commit by swapping buffer
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(m_window);
     glfwPollEvents();
   }
+}
+bool Window::is_key_pressed(int glfw_key) {
+  return glfwGetKey(m_window, glfw_key) == GLFW_PRESS;
+}
+bool Window::get_cursor_position(glm::vec2 &out_position) {
+  double x, y;
+  glfwGetCursorPos(m_window, &x, &y);
+
+  auto new_position = glm::vec2{x,y};
+  auto did_change = new_position != m_mouse_position;
+  out_position = new_position - m_mouse_position;
+
+  m_mouse_position = new_position;
+
+  return did_change;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
