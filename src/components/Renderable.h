@@ -6,14 +6,14 @@
 
 namespace components {
 
-struct Renderable {
-  std::vector<engine::RenderAssetRef> parts;
+    struct Renderable {
+        std::vector<engine::RenderAssetRef> parts;
 
-  explicit Renderable(std::vector<engine::RenderAssetRef> &&parts) : parts(parts) {}
-  explicit Renderable(engine::RenderAssetRef &&part)
-      : parts(std::vector<engine::RenderAssetRef>{part}) {}
-};
+        explicit Renderable(std::vector<engine::RenderAssetRef> &&parts) : parts(parts) {}
+        explicit Renderable(engine::RenderAssetRef &&part)
+            : parts(std::vector<engine::RenderAssetRef>{part}) {}
+    };
 
-} // namespace components
+}// namespace components
 
-#endif // OPENGL_TEST2_RENDERABLE_H
+#endif// OPENGL_TEST2_RENDERABLE_H

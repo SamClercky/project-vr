@@ -1,25 +1,25 @@
 #include "engine/Renderer.h"
-#include "scenes/Scene.h"
 #include "engine/Window.h"
+#include "scenes/Scene.h"
 
 #include <iostream>
 
 int main() {
-  std::cout << "Starting program" << std::endl;
+    std::cout << "Starting program" << std::endl;
 
-  auto window = engine::Window(800, 600, std::string{"Hello world"});
+    auto window = engine::Window(800, 600, std::string{"Hello world"});
 
-  engine::Renderer renderer{};
-  scenes::Scene scene{window, renderer};
-  window.loop([&](uint64_t deltaTime) {
-    scene.update(deltaTime);
-    {
-      auto renderGuard = renderer.startRender();
-      scene.render(renderGuard);
-    };
+    engine::Renderer renderer{};
+    scenes::Scene scene{window, renderer};
+    window.loop([&](uint64_t deltaTime) {
+        scene.update(deltaTime);
+        {
+            auto renderGuard = renderer.startRender();
+            scene.render(renderGuard);
+        };
 
-    renderer.render();
-  });
+        renderer.render();
+    });
 
-  return 0;
+    return 0;
 }

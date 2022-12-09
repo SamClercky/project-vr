@@ -116,7 +116,7 @@ Window::Window(int width, int height, std::string &&title) {
     make_current();
 
     // load openGL function
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
@@ -153,21 +153,21 @@ void Window::make_current() {
 
 Window::~Window() {
     glfwDestroyWindow(m_window);
-    m_window = nullptr; // make sure no dangling pointers
+    m_window = nullptr;// make sure no dangling pointers
     glfwTerminate();
 }
 
 void Window::set_title(std::string &&title) {
     glfwSetWindowTitle(m_window, title.c_str());
 }
-void Window::loop(const std::function<void(const uint64_t)>& callback) {
-    auto prevTime = (uint64_t)(glfwGetTime() * 1000.0);
+void Window::loop(const std::function<void(const uint64_t)> &callback) {
+    auto prevTime = (uint64_t) (glfwGetTime() * 1000.0);
 
     // vsync
     glfwSwapInterval(1);
     while (!glfwWindowShouldClose(m_window)) {
         // update delta
-        auto currTime = (uint64_t)(glfwGetTime() * 1000.0);
+        auto currTime = (uint64_t) (glfwGetTime() * 1000.0);
         auto delta = currTime - prevTime;
         prevTime = currTime;
 
@@ -183,10 +183,14 @@ void Window::loop(const std::function<void(const uint64_t)>& callback) {
 }
 bool Window::is_key_pressed(Window::ButtonDirections key) {
     switch (key) {
-        case Window::ButtonDirections::Up: return (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f);
-        case Window::ButtonDirections::Down: return glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 1) > .5f);
-        case Window::ButtonDirections::Left: return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f);
-        case Window::ButtonDirections::Right: return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
+        case Window::ButtonDirections::Up:
+            return (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f);
+        case Window::ButtonDirections::Down:
+            return glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 1) > .5f);
+        case Window::ButtonDirections::Left:
+            return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f);
+        case Window::ButtonDirections::Right:
+            return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
     }
 }
 
@@ -196,10 +200,10 @@ bool Window::get_cursor_position(glm::vec2 &out_position) {
     glfwGetCursorPos(m_window, &x, &y);
 
     float joy_x, joy_y;
-    joy_x = get_joystick_value(GLFW_JOYSTICK_1, 2)*1.5f;
-    joy_y = get_joystick_value(GLFW_JOYSTICK_1, 3)*1.5f;
+    joy_x = get_joystick_value(GLFW_JOYSTICK_1, 2) * 1.5f;
+    joy_y = get_joystick_value(GLFW_JOYSTICK_1, 3) * 1.5f;
 
-    auto new_position = glm::vec2{(float)x, (float)y};
+    auto new_position = glm::vec2{(float) x, (float) y};
     auto did_change = new_position != m_mouse_position || abs(joy_x) >= .1f || abs(joy_y) >= .1f;
     out_position = new_position - m_mouse_position;
 
@@ -211,10 +215,10 @@ bool Window::get_cursor_position(glm::vec2 &out_position) {
     return did_change;
 #endif
 #ifdef VR_USE_ARROW_KEYS_AS_MOUSE
-    out_position.y += (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f)? 1.f : 0.f;
-    out_position.y += glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 1) > .5f)? -1.f:0.f;
-    out_position.x += glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f)? 1.f:0.f;
-    out_position.x += glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f)? -1.f:0.f;
+    out_position.y += (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f) ? 1.f : 0.f;
+    out_position.y += glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 1) > .5f) ? -1.f : 0.f;
+    out_position.x += glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f) ? 1.f : 0.f;
+    out_position.x += glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f) ? -1.f : 0.f;
 
     out_position *= 3;
 
@@ -223,19 +227,19 @@ bool Window::get_cursor_position(glm::vec2 &out_position) {
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 }
 
 float get_joystick_value(int glfw_joystick, unsigned int axis) {
-  if (!glfwJoystickPresent(glfw_joystick))
-    return 0.f;
+    if (!glfwJoystickPresent(glfw_joystick))
+        return 0.f;
 
-  int count;
-  const float* inputs = glfwGetJoystickAxes(glfw_joystick, &count);
-  return count > axis ? *(inputs + axis) : 0.f;
+    int count;
+    const float *inputs = glfwGetJoystickAxes(glfw_joystick, &count);
+    return count > axis ? *(inputs + axis) : 0.f;
 }

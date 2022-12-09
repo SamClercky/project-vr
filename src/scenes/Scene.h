@@ -8,19 +8,19 @@
 
 namespace scenes {
 
-class Scene {
-public:
-  explicit Scene(engine::Window& window, engine::Renderer &renderer);
-  ~Scene() = default;
+    class Scene {
+    public:
+        explicit Scene(engine::Window &window, engine::Renderer &renderer);
+        ~Scene() = default;
 
-  void update(uint64_t deltaTime);
-  void render(engine::Renderer::RenderGuard &renderer);
+        void update(uint64_t deltaTime);
+        void render(engine::Renderer::RenderGuard &renderer);
 
-private:
-  entt::registry m_registry;
-  engine::Window &m_window_ref;
-};
+    private:
+        entt::registry m_registry;
+        engine::Window &m_window_ref;
+    };
 
-}
+}// namespace scenes
 
-#endif // OPENGL_TEST2_SCENE_H
+#endif// OPENGL_TEST2_SCENE_H

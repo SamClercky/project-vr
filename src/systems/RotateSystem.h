@@ -5,8 +5,8 @@
 
 namespace systems {
 
-void rotateSystem(entt::registry &registry);
+    void rotateSystem(entt::registry &registry);
 
-} // namespace systems
+}// namespace systems
 
-#endif // PROJECT_VR_ROTATESYSTEM_H
+#endif// PROJECT_VR_ROTATESYSTEM_H

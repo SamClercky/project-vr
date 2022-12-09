@@ -5,7 +5,7 @@
 #include <entt/entt.hpp>
 
 namespace systems {
-  void inputUpdaterSystem(entt::registry &registry, engine::Window &window);
+    void inputUpdaterSystem(entt::registry &registry, engine::Window &window);
 }
 
-#endif // PROJECT_VR_INPUTUPDATERSYSTEM_H
+#endif// PROJECT_VR_INPUTUPDATERSYSTEM_H

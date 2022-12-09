@@ -6,8 +6,8 @@
 
 namespace systems {
 
-void cameraSystem(engine::Renderer::RenderGuard &renderer, entt::registry &registry);
+    void cameraSystem(engine::Renderer::RenderGuard &renderer, entt::registry &registry);
 
-} // namespace systems
+}// namespace systems
 
-#endif // PROJECT_VR_CAMERASYSTEM_H
+#endif// PROJECT_VR_CAMERASYSTEM_H

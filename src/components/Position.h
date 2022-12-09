@@ -6,31 +6,31 @@
 
 namespace components {
 
-struct Position {
-  glm::mat4 pos{1.0};
+    struct Position {
+        glm::mat4 pos{1.0};
 
-  explicit Position(glm::mat4 M) : pos(M) {}
-  explicit Position(glm::vec3 translation)
-      : Position(translation, glm::mat3{1.0}) {}
-  explicit Position(glm::mat3 rotation) : Position(glm::vec3{0.0}, rotation) {}
-  Position(glm::vec3 translation, glm::mat3 rotation) {
-    pos = glm::mat4{rotation};
-    pos = glm::translate(pos, translation);
-  }
+        explicit Position(glm::mat4 M) : pos(M) {}
+        explicit Position(glm::vec3 translation)
+            : Position(translation, glm::mat3{1.0}) {}
+        explicit Position(glm::mat3 rotation) : Position(glm::vec3{0.0}, rotation) {}
+        Position(glm::vec3 translation, glm::mat3 rotation) {
+            pos = glm::mat4{rotation};
+            pos = glm::translate(pos, translation);
+        }
 
-  glm::mat3 get_rotation() {
-    return glm::mat3{
-        glm::vec3{pos[0]},
-        glm::vec3{pos[1]},
-        glm::vec3{pos[2]},
+        glm::mat3 get_rotation() {
+            return glm::mat3{
+                    glm::vec3{pos[0]},
+                    glm::vec3{pos[1]},
+                    glm::vec3{pos[2]},
+            };
+        }
+
+        glm::vec3 get_translation() {
+            return glm::vec3{pos[3]};
+        }
     };
-  }
 
-  glm::vec3 get_translation() {
-    return glm::vec3{pos[3]};
-  }
-};
+}// namespace components
 
-} // namespace components
-
-#endif // OPENGL_TEST2_POSITION_H
+#endif// OPENGL_TEST2_POSITION_H

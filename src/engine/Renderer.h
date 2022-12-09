@@ -7,57 +7,57 @@
 
 namespace engine {
 
-struct RenderAssetRef {
-  std::shared_ptr<Mesh> mesh;
-  std::shared_ptr<Shader> shader;
-  std::shared_ptr<Texture2D> texture;
-};
+    struct RenderAssetRef {
+        std::shared_ptr<Mesh> mesh;
+        std::shared_ptr<Shader> shader;
+        std::shared_ptr<Texture2D> texture;
+    };
 
-struct RenderObject {
-  glm::mat4 modelView;
-  RenderAssetRef asset;
-};
+    struct RenderObject {
+        glm::mat4 modelView;
+        RenderAssetRef asset;
+    };
 
-struct Frame {
-  glm::mat4 view;
-  glm::mat4 perspective;
-  std::vector<RenderObject> objects;
-};
+    struct Frame {
+        glm::mat4 view;
+        glm::mat4 perspective;
+        std::vector<RenderObject> objects;
+    };
 
-class Renderer {
-public:
-  struct RenderGuard {
-    explicit RenderGuard(Frame &renderBin);
-    ~RenderGuard();
+    class Renderer {
+    public:
+        struct RenderGuard {
+            explicit RenderGuard(Frame &renderBin);
+            ~RenderGuard();
 
-    void submit(RenderAssetRef obj, glm::mat4 modelView);
-    void submit_camera(glm::mat4 perspective, glm::mat4 view);
+            void submit(RenderAssetRef obj, glm::mat4 modelView);
+            void submit_camera(glm::mat4 perspective, glm::mat4 view);
 
-  private:
-    Frame &renderBin;
-  };
+        private:
+            Frame &renderBin;
+        };
 
-  Renderer();
-  ~Renderer() = default;
+        Renderer();
+        ~Renderer() = default;
 
-  RenderGuard startRender();
+        RenderGuard startRender();
 
-  void render();
+        void render();
 
-  std::shared_ptr<Mesh> submitToStore(Mesh &&mesh);
-  std::shared_ptr<Shader> submitToStore(Shader &&shader);
-  std::shared_ptr<Texture2D> submitToStore(Texture2D &&texture2D);
+        std::shared_ptr<Mesh> submitToStore(Mesh &&mesh);
+        std::shared_ptr<Shader> submitToStore(Shader &&shader);
+        std::shared_ptr<Texture2D> submitToStore(Texture2D &&texture2D);
 
-private:
-  static bool isGuardActive;
-  Frame currFrame;
-  Frame nextFrame;
+    private:
+        static bool isGuardActive;
+        Frame currFrame;
+        Frame nextFrame;
 
-  std::vector<std::shared_ptr<Mesh>> meshStore;
-  std::vector<std::shared_ptr<Shader>> shaderStore;
-  std::vector<std::shared_ptr<Texture2D>> textureStore;
-};
+        std::vector<std::shared_ptr<Mesh>> meshStore;
+        std::vector<std::shared_ptr<Shader>> shaderStore;
+        std::vector<std::shared_ptr<Texture2D>> textureStore;
+    };
 
-}
+}// namespace engine
 
-#endif // OPENGL_TEST2_RENDERER_H
+#endif// OPENGL_TEST2_RENDERER_H

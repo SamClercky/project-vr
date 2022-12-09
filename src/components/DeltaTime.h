@@ -9,13 +9,13 @@
 
 namespace components {
 
-struct DeltaTime {
-  uint64_t dt;
+    struct DeltaTime {
+        uint64_t dt;
 
-  explicit DeltaTime(uint64_t dt) : dt(dt) {}
-  float sec() const { return (float)dt/1000.f; }
-};
+        explicit DeltaTime(uint64_t dt) : dt(dt) {}
+        float sec() const { return (float) dt / 1000.f; }
+    };
 
-} // namespace components
+}// namespace components
 
-#endif // OPENGL_TEST2_DELTATIME_H
+#endif// OPENGL_TEST2_DELTATIME_H

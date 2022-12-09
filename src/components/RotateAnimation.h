@@ -3,12 +3,12 @@
 
 namespace components {
 
-struct RotateAnimation {
-  float rotationSpeed;
+    struct RotateAnimation {
+        float rotationSpeed;
 
-  explicit RotateAnimation(float speed) : rotationSpeed(speed) {}
-};
+        explicit RotateAnimation(float speed) : rotationSpeed(speed) {}
+    };
 
-} // namespace components
+}// namespace components
 
-#endif // OPENGL_TEST2_ROTATEANIMATION_H
+#endif// OPENGL_TEST2_ROTATEANIMATION_H

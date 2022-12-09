@@ -6,8 +6,8 @@
 
 namespace systems {
 
-void drawSystem(engine::Renderer::RenderGuard &renderer, entt::registry &registry);
+    void drawSystem(engine::Renderer::RenderGuard &renderer, entt::registry &registry);
 
-} // namespace systems
+}// namespace systems
 
-#endif // PROJECT_VR_DRAWSYSTEM_H
+#endif// PROJECT_VR_DRAWSYSTEM_H
