@@ -6,10 +6,7 @@
 namespace prefabs {
 
     void cameraPrefab(entt::registry &registry) {
-        auto cameraEntity = registry.create();
-        registry.emplace<components::Camera>(cameraEntity, 800.0f, 600.0f);
-        registry.emplace<components::Position>(cameraEntity,
-                                               glm::vec3{0.0, 0.0, -3.0});
+        registry.ctx().insert_or_assign(components::Camera{800.0f, 600.0f});
     }
 
 }// namespace prefabs
