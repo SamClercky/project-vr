@@ -31,6 +31,9 @@ namespace engine {
         // if_changed
         bool get_cursor_position(glm::vec2 &out_position);
 
+        // returns true if it has changed
+        bool get_viewport(int &width, int &height);
+
     private:
         GLFWwindow *m_window;
         glm::vec2 m_mouse_position;

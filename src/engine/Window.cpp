@@ -8,6 +8,10 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 float get_joystick_value(int glfw_joystick, unsigned int axis);
 
+static int m_width = 0.f;
+static int m_height = 0.f;
+static bool hasViewportChanged = true;
+
 // Debug setup code from exercises
 #ifndef NDEBUG
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
@@ -93,6 +97,9 @@ void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
 #endif
 
 Window::Window(int width, int height, std::string &&title) {
+    m_width = width;
+    m_height = height;
+    hasViewportChanged = true;
     // Create the OpenGL context
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialise GLFW \n");
@@ -225,9 +232,20 @@ bool Window::get_cursor_position(glm::vec2 &out_position) {
     return true;
 #endif
 }
+bool Window::get_viewport(int &width, int &height) {
+    width = m_width;
+    height = m_height;
+
+    auto hasChanged = hasViewportChanged;
+    hasViewportChanged = false;
+    return hasChanged;
+}
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+    hasViewportChanged = true;
+    m_width = width;
+    m_height = height;
 }
 
 void processInput(GLFWwindow *window) {

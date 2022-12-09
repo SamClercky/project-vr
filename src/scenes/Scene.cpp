@@ -6,6 +6,7 @@
 #include "systems/DrawSystem.h"
 #include "systems/InputUpdaterSystem.h"
 #include "systems/RotateSystem.h"
+#include "systems/ViewportUpdateSystem.h"
 
 using namespace scenes;
 
@@ -28,6 +29,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
 void Scene::update(uint64_t deltaTime) {
     m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
+    systems::update_viewport_system(m_registry, m_window_ref);
     systems::inputUpdaterSystem(m_registry, m_window_ref);
     systems::rotateSystem(m_registry);
 }

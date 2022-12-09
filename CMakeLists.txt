@@ -78,10 +78,11 @@ set(PROJECT-SRC
         src/systems/DrawSystem.h src/systems/DrawSystem.cpp
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
-        )
+        src/systems/ViewportUpdateSystem.cpp src/systems/ViewportUpdateSystem.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)
+#add_definitions(-DVR_USE_ARROW_KEYS_AS_MOUSE) # Replace mouse movements with arrow keys
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT-SRC})
 target_link_libraries(${PROJECT_NAME} PUBLIC
         ${OPENGL_LIBRARIES} glfw glad assimp EnTT
