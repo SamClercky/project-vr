@@ -1,7 +1,3 @@
-//
-// Created by decle on 11/29/2022.
-//
-
 #ifndef OPENGL_TEST2_CAMERA_H
 #define OPENGL_TEST2_CAMERA_H
 
