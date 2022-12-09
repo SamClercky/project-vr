@@ -13,6 +13,7 @@ struct DeltaTime {
   uint64_t dt;
 
   explicit DeltaTime(uint64_t dt) : dt(dt) {}
+  float sec() const { return (float)dt/1000.f; }
 };
 
 } // namespace components

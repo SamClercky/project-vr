@@ -10,7 +10,7 @@ void cameraSystem(engine::Renderer::RenderGuard &renderer, entt::registry &regis
     auto &cam = view.get<components::Camera>(cameraEntity);
     renderer.submit_camera(
         cam.perspective,
-        glm::lookAt(cam.position, cam.position + cam.lookDirection, cam.worldUp)
+        glm::lookAt(cam.position, cam.position + cam.get_look_direction(), cam.worldUp)
     );
   }
 }
