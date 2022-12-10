@@ -22,12 +22,21 @@ namespace engine {
 
         std::shared_ptr<Texture2D> loadTexture(std::filesystem::path &&path,
                                                TextureConfig &&config = TextureConfig{});
-        std::shared_ptr<Model> loadModel(std::filesystem::path &&path);
+        std::shared_ptr<Model> loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader);
         std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
                                            std::filesystem::path &&fragmentPath);
 
-        void submitMesh(std::shared_ptr<Mesh> mesh) {
+        void submitMesh(const std::shared_ptr<Mesh>& mesh) {
             meshStore.push_back(mesh);
+        }
+        void submitModel(const std::shared_ptr<Model>& model) {
+            modelStore.push_back(model);
+        }
+        void submitTexture(const std::shared_ptr<Texture2D>& texture2D) {
+            textureStore.push_back(texture2D);
+        }
+        void submitShader(const std::shared_ptr<Shader>& shader) {
+            shaderStore.push_back(shader);
         }
     private:
         std::vector<std::shared_ptr<Model>> modelStore;

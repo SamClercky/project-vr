@@ -259,19 +259,18 @@ namespace {
 
 }
 
-void prefabs::cubePrefab(engine::Model asset,
+void prefabs::cubePrefab(std::shared_ptr<engine::Model> &asset,
                          std::shared_ptr<engine::Shader> &shader,
                          entt::registry &registry,
                          glm::vec3 position) {
     auto entity = registry.create();
     registry.emplace<components::Position>(entity, position);
     registry.emplace<components::Renderable>(
-            entity, std::vector<engine::Model>{std::move(asset)}, shader);
+            entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
     registry.emplace<components::RotateAnimation>(entity, 10.);
 }
 
-void prefabs::cubePrefabLoader(engine::Renderer &renderer,
-                               engine::Model &outModel,
+void prefabs::cubePrefabLoader(std::shared_ptr<engine::Model> &outModel,
                                std::shared_ptr<engine::Shader> &outShader) {
     auto cubeTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "container.jpg");
     cubeTexture->configure_texture({
@@ -290,5 +289,5 @@ void prefabs::cubePrefabLoader(engine::Renderer &renderer,
             outShader);
     engine::GlobalAssetManager.submitMesh(mesh);
 
-    outModel = engine::Model{std::vector<std::shared_ptr<engine::Mesh>>{mesh}};
+    outModel = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
 }

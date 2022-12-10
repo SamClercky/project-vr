@@ -55,9 +55,6 @@ Mesh::Mesh(std::vector<Vertex> &&vertexData,
     }
 
     // unbind buffers
-    if (!eboData.empty())
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 void BoundedMeshGuard::draw() const {

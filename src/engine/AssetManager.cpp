@@ -1,6 +1,11 @@
 #include "AssetManager.h"
 #include "stb_image.h"
 #include <iostream>
+#include <stack>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace engine {
     AssetManager GlobalAssetManager = AssetManager{};
@@ -30,8 +35,81 @@ namespace engine {
         return texture;
     }
 
-    std::shared_ptr<Model> AssetManager::loadModel(std::filesystem::path &&path) {
-        return std::shared_ptr<Model>();
+    std::shared_ptr<Model> AssetManager::loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader) {
+        Assimp::Importer importer;
+        const auto *scene = importer.ReadFile(path.string().c_str(), aiProcess_Triangulate
+                                                                             | aiProcess_FlipUVs
+                                                                             | aiProcess_GenNormals);
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+            std::stringstream ss;
+            ss << "ERROR::ASSIMP::SCENE_NOT_LOADED::" << importer.GetErrorString();
+            std::cerr << ss.str() << std::endl;
+            throw std::runtime_error(ss.str());
+        }
+
+        // processing nodes -> assimp uses as tree that needs to be processed
+        std::stack<aiNode*> recursiveAgenda;
+        recursiveAgenda.push(scene->mRootNode); // initial node
+        auto model = std::make_shared<Model>(std::vector<std::shared_ptr<Mesh>>{});
+
+        while (!recursiveAgenda.empty()) {
+            auto node = recursiveAgenda.top(); // get element
+            recursiveAgenda.pop(); // remove element
+
+            // process mesh
+            for (uint32_t i = 0; i < node->mNumMeshes; i++) {
+                auto aMesh = scene->mMeshes[node->mMeshes[i]];
+
+                std::vector<Vertex> vertices;
+                std::vector<uint32_t> indices;
+                std::vector<std::shared_ptr<Texture2D>> textures;
+
+                // Process vertices
+                for (uint32_t j = 0; j < aMesh->mNumVertices; j++) {
+                    Vertex vertex{
+                            glm::vec3{
+                                    aMesh->mVertices[j].x,
+                                    aMesh->mVertices[j].y,
+                                    aMesh->mVertices[j].z,
+                            },
+                            glm::vec3{
+                                    aMesh->mNormals[j].x,
+                                    aMesh->mNormals[j].y,
+                                    aMesh->mNormals[j].z,
+                            },
+                            glm::vec2{
+                                    aMesh->mTextureCoords[0][j].x,
+                                    aMesh->mTextureCoords[0][j].y,
+                            }
+                    };
+                    vertices.push_back(vertex);
+                }
+
+                // Process indices
+                for (uint32_t j = 0; j < aMesh->mNumFaces; j++) {
+                    auto aFace = aMesh->mFaces[j];
+                    for (uint32_t k = 0; k < aFace.mNumIndices; k++) {
+                        indices.push_back(aFace.mIndices[k]);
+                    }
+                }
+
+                // TODO: Process materials (diffuse maps and specular maps)
+
+                // Put everything into the model
+                auto mesh = std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures), shader);
+                meshStore.push_back(mesh);
+                model->meshes.push_back(mesh);
+            }
+
+            // recurse to other children
+            for (uint32_t i = 0; i < node->mNumChildren; i++) {
+                recursiveAgenda.push(node->mChildren[i]);
+            }
+        }
+
+        importer.FreeScene();
+
+        return model;
     }
 
     std::shared_ptr<Shader> AssetManager::loadShader(std::filesystem::path &&vertexPath,

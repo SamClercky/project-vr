@@ -8,12 +8,11 @@
 
 namespace prefabs {
 
-    void cubePrefab(engine::Model asset,
+    void cubePrefab(std::shared_ptr<engine::Model> &asset,
                     std::shared_ptr<engine::Shader> &shader,
                     entt::registry &registry,
                     glm::vec3 position);
-    void cubePrefabLoader(engine::Renderer &renderer,
-                          engine::Model &outModel,
+    void cubePrefabLoader(std::shared_ptr<engine::Model> &outModel,
                           std::shared_ptr<engine::Shader> &outShader);
 
 }// namespace prefabs

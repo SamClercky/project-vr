@@ -9,6 +9,8 @@
 namespace engine {
     class Model {
     public:
+        std::vector<std::shared_ptr<Mesh>> meshes;
+
         explicit Model(std::vector<std::shared_ptr<Mesh>> &&meshes)
                 : meshes(meshes) {}
 
@@ -31,8 +33,6 @@ namespace engine {
                         .shader = shader,
                 }, position);
         }
-    private:
-        std::vector<std::shared_ptr<Mesh>> meshes;
     };
 }
 

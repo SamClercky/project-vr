@@ -7,6 +7,7 @@
 #include "systems/InputUpdaterSystem.h"
 #include "systems/RotateSystem.h"
 #include "systems/ViewportUpdateSystem.h"
+#include "prefabs/RabbitPrefab.h"
 
 using namespace scenes;
 
@@ -20,12 +21,17 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
 
-    engine::Model model{std::vector<std::shared_ptr<engine::Mesh>>{}};
-    std::shared_ptr<engine::Shader> shader;
-    prefabs::cubePrefabLoader(renderer, model, shader);
+    std::shared_ptr<engine::Model> cubeModel;
+    std::shared_ptr<engine::Shader> cubeShader;
+    prefabs::cubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
-        prefabs::cubePrefab(model, shader, m_registry, position);
+        prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
     }
+
+    std::shared_ptr<engine::Model> rabbitModel;
+    std::shared_ptr<engine::Shader> rabbitShader;
+    prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
+    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
 
     prefabs::cameraPrefab(m_registry);
 }

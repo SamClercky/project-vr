@@ -81,7 +81,7 @@ set(PROJECT-SRC
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
-        )
+        src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)
