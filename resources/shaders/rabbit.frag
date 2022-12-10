@@ -2,7 +2,8 @@
 
 out vec4 FragColor;
 in vec3 vPosition;
+in vec3 vTexCoord;
 
 void main() {
-    FragColor = vec4(1.f, 0.f, 0.f, 1.f);
+    FragColor = vec4(vTexCoord, 1.f);
 }
