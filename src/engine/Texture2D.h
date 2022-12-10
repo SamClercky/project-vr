@@ -19,23 +19,8 @@ namespace engine {
         NEAREST = GL_NEAREST,
     };
 
-    enum class TextureLocation {
-        Texture0 = GL_TEXTURE0,
-        Texture1 = GL_TEXTURE1,
-        Texture2 = GL_TEXTURE2,
-        Texture3 = GL_TEXTURE3,
-        Texture4 = GL_TEXTURE4,
-        Texture5 = GL_TEXTURE5,
-        Texture6 = GL_TEXTURE6,
-        Texture7 = GL_TEXTURE7,
-        Texture8 = GL_TEXTURE8,
-        Texture9 = GL_TEXTURE9,
-        Texture10 = GL_TEXTURE10,
-        Texture11 = GL_TEXTURE11,
-        Texture12 = GL_TEXTURE12,
-        Texture13 = GL_TEXTURE13,
-        Texture14 = GL_TEXTURE14,
-        Texture15 = GL_TEXTURE15,
+    enum class TextureType {
+        Image, Specular, Diffuse
     };
 
     struct TextureConfig {
@@ -47,33 +32,62 @@ namespace engine {
 
     struct BoundedTexture2DGuard {
         uint32_t textureID;
-        TextureLocation location;
+        GLenum location;
+        bool engaged;
 
-        BoundedTexture2DGuard(uint32_t textureID, TextureLocation location)
-            : textureID(textureID), location(location) {
-            glActiveTexture(static_cast<GLenum>(location));
+        // Creates unengaged guard
+        BoundedTexture2DGuard()
+                : textureID(0), location(0), engaged(false) {}
+
+        BoundedTexture2DGuard(uint32_t textureID, uint8_t location)
+            : textureID(textureID), location(location), engaged(true) {
+            if (location > 15) throw std::runtime_error("Texture out of range");
+            this->location = GL_TEXTURE0 + location;
+            glActiveTexture(this->location);
             glBindTexture(GL_TEXTURE_2D, textureID);
         }
-        ~BoundedTexture2DGuard() {
-            glActiveTexture(static_cast<GLenum>(location));
-            glBindTexture(GL_TEXTURE_2D, textureID);
+        ~BoundedTexture2DGuard() noexcept {
+            if (!engaged) return;
+            glActiveTexture(location);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        BoundedTexture2DGuard(BoundedTexture2DGuard &&other) noexcept {
+            this->textureID = other.textureID;
+            this->location = other.location;
+            other.engaged = false;
+        }
+
+        BoundedTexture2DGuard& operator =(BoundedTexture2DGuard &&other) noexcept {
+            this->textureID = other.textureID;
+            this->location = other.location;
+            this->engaged = true;
+            other.engaged = false;
+
+            return *this;
         }
     };
 
     class Texture2D {
     public:
         Texture2D();
-        explicit Texture2D(const char *path);
+        explicit Texture2D(uint8_t const *data, int width, int height, int nrChannels, TextureType type);
         ~Texture2D();
-        Texture2D(Texture2D &&other) = default;
+        Texture2D(Texture2D const &other) = default;
+        Texture2D(Texture2D &&other) noexcept {
+            textureID = other.textureID;
+            other.textureID = 0;
+            type = other.type;
+        }
 
         void configure_texture(TextureConfig config) const;
-        [[nodiscard]] BoundedTexture2DGuard bind(TextureLocation location) const {
+        [[nodiscard]] BoundedTexture2DGuard bind(uint8_t location) const {
             return {textureID, location};
         }
 
     private:
         uint32_t textureID;
+        TextureType type;
     };
 
 }// namespace engine

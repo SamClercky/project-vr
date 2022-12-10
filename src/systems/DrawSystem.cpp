@@ -1,6 +1,7 @@
 #include "DrawSystem.h"
 #include "components/Position.h"
 #include "components/Renderable.h"
+#include <vector>
 
 namespace systems {
 
@@ -11,7 +12,7 @@ namespace systems {
             const auto &renderable = view.get<components::Renderable>(entity);
             const auto &position = view.get<components::Position>(entity);
             for (const auto &part: renderable.parts)
-                renderer.submit(part, position.pos);
+                part.draw(renderer, renderable.shaderRef, position.pos, std::vector<glm::mat4>{});
         }
     }
 

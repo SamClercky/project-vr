@@ -28,13 +28,6 @@ void Renderer::render() {
 
     for (const auto &obj: currFrame.objects) {
         auto meshGuard = obj.asset.mesh->bind();
-        auto textureGuard = obj.asset.texture->bind(TextureLocation::Texture0);
-
-        //    auto view = glm::mat4(1.0f);
-        //    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        //    auto projection =
-        //        glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f,
-        //        100.0f);
 
         const auto &shader = obj.asset.shader;
         shader->use();
@@ -44,22 +37,6 @@ void Renderer::render() {
 
         meshGuard.draw();
     }
-}
-
-std::shared_ptr<Mesh> Renderer::submitToStore(Mesh &&mesh) {
-    auto ptr = std::make_shared<Mesh>(std::move(mesh));
-    meshStore.push_back(ptr);
-    return ptr;
-}
-std::shared_ptr<Shader> Renderer::submitToStore(Shader &&shader) {
-    auto ptr = std::make_shared<Shader>(std::move(shader));
-    shaderStore.push_back(ptr);
-    return ptr;
-}
-std::shared_ptr<Texture2D> Renderer::submitToStore(Texture2D &&texture) {
-    auto ptr = std::make_shared<Texture2D>(std::move(texture));
-    textureStore.push_back(ptr);
-    return ptr;
 }
 
 Renderer::RenderGuard::RenderGuard(Frame &renderBin) : renderBin(renderBin) {

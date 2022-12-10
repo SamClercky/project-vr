@@ -10,7 +10,6 @@ namespace engine {
     struct RenderAssetRef {
         std::shared_ptr<Mesh> mesh;
         std::shared_ptr<Shader> shader;
-        std::shared_ptr<Texture2D> texture;
     };
 
     struct RenderObject {
@@ -44,18 +43,11 @@ namespace engine {
 
         void render();
 
-        std::shared_ptr<Mesh> submitToStore(Mesh &&mesh);
-        std::shared_ptr<Shader> submitToStore(Shader &&shader);
-        std::shared_ptr<Texture2D> submitToStore(Texture2D &&texture2D);
-
     private:
         static bool isGuardActive;
         Frame currFrame;
         Frame nextFrame;
 
-        std::vector<std::shared_ptr<Mesh>> meshStore;
-        std::vector<std::shared_ptr<Shader>> shaderStore;
-        std::vector<std::shared_ptr<Texture2D>> textureStore;
     };
 
 }// namespace engine

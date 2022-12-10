@@ -2,11 +2,19 @@
 
 using namespace engine;
 
-Mesh::Mesh(std::vector<Vertex> &&vertexData)
-    : Mesh(std::move(vertexData), std::move(std::vector<uint32_t>{})) {}
+Mesh::Mesh(std::vector<Vertex> &&vertexData, std::shared_ptr<Shader> &shader)
+    : Mesh(std::move(vertexData),
+           std::move(std::vector<uint32_t>{}),
+           std::move(std::vector<std::shared_ptr<Texture2D>>{}),
+           shader) {}
 
-Mesh::Mesh(std::vector<Vertex> &&vertexData, std::vector<uint32_t> &&eboData)
-    : vertexData(vertexData), eboData(eboData) {
+Mesh::Mesh(std::vector<Vertex> &&vertexData,
+           std::vector<uint32_t> &&eboData,
+           std::vector<std::shared_ptr<Texture2D>> &&textures,
+           std::shared_ptr<Shader> &shader)
+    : vertexData(vertexData),
+      eboData(eboData),
+      textures(textures) {
     GLuint VAO, VBO, EBO;
 
     glGenVertexArrays(1, &VAO);
@@ -22,14 +30,23 @@ Mesh::Mesh(std::vector<Vertex> &&vertexData, std::vector<uint32_t> &&eboData)
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexData.size(),
                  vertexData.data(), GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, position));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void *) offsetof(Vertex, normal));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                          (void *) offsetof(Vertex, texCoord));
+    auto position_attr = glGetAttribLocation(shader->ID, "position");
+    if (position_attr != -1) {
+        glEnableVertexAttribArray(position_attr);
+        glVertexAttribPointer(position_attr, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, position));
+    }
+    auto normal_attr = glGetAttribLocation(shader->ID, "normal");
+    if (normal_attr != -1) {
+        glEnableVertexAttribArray(normal_attr);
+        glVertexAttribPointer(normal_attr, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                              (void *) offsetof(Vertex, normal));
+    }
+    auto textureCoord_attr = glGetAttribLocation(shader->ID, "texCoord");
+    if (textureCoord_attr != -1) {
+        glEnableVertexAttribArray(textureCoord_attr);
+        glVertexAttribPointer(textureCoord_attr, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                              (void *) offsetof(Vertex, texCoord));
+    }
 
     if (!eboData.empty()) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -44,6 +61,11 @@ Mesh::Mesh(std::vector<Vertex> &&vertexData, std::vector<uint32_t> &&eboData)
     glBindVertexArray(0);
 }
 void BoundedMeshGuard::draw() const {
+    BoundedTexture2DGuard guards[16];
+    for (uint8_t i = 0; i < textures.size() && i < 16; i++) {
+        guards[i] = textures[i]->bind(i);
+    }
+
     if (containsEBO)
         glDrawElements(GL_TRIANGLES, numberOfTriangles, GL_UNSIGNED_INT,
                        nullptr);

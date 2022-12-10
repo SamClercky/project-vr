@@ -4,26 +4,20 @@
 
 using namespace engine;
 
-Texture2D::Texture2D() {
+Texture2D::Texture2D() : type(TextureType::Image) {
     textureID = 0;
     glGenTextures(1, &textureID);
 }
 
-Texture2D::Texture2D(const char *path) {
+Texture2D::Texture2D(uint8_t const *data, int width, int height, int nrChannels, TextureType type)
+    : type(type) {
     textureID = 0;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    int width, height, nrChannels;
-    uint8_t *data = stbi_load(path, &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                     GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cerr << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }

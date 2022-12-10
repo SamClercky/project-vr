@@ -2,14 +2,19 @@
 #define OPENGL_TEST2_CUBEPREFAB_H
 
 #include "components/Renderable.h"
+#include "engine/Model.h"
 #include "engine/Renderer.h"
 #include <entt/entt.hpp>
 
 namespace prefabs {
 
-    void cubePrefab(engine::RenderAssetRef asset, entt::registry &registry,
+    void cubePrefab(engine::Model asset,
+                    std::shared_ptr<engine::Shader> &shader,
+                    entt::registry &registry,
                     glm::vec3 position);
-    engine::RenderAssetRef cubePrefabLoader(engine::Renderer &renderer);
+    void cubePrefabLoader(engine::Renderer &renderer,
+                          engine::Model &outModel,
+                          std::shared_ptr<engine::Shader> &outShader);
 
 }// namespace prefabs
 

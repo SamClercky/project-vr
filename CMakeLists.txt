@@ -63,7 +63,9 @@ set(PROJECT-SRC
         src/components/Renderable.h
         src/components/RotateAnimation.h
 
+        src/engine/AssetManager.h src/engine/AssetManager.cpp
         src/engine/Mesh.h src/engine/Mesh.cpp
+        src/engine/Model.h
         src/engine/Renderer.h src/engine/Renderer.cpp
         src/engine/Shader.h src/engine/Shader.cpp
         src/engine/Texture2D.h src/engine/Texture2D.cpp
@@ -78,7 +80,8 @@ set(PROJECT-SRC
         src/systems/DrawSystem.h src/systems/DrawSystem.cpp
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
-        src/systems/ViewportUpdateSystem.cpp src/systems/ViewportUpdateSystem.h)
+        src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
+        )
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)

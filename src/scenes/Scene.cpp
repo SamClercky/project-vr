@@ -19,9 +19,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
             glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
-    auto cubeObj = prefabs::cubePrefabLoader(renderer);
+
+    engine::Model model{std::vector<std::shared_ptr<engine::Mesh>>{}};
+    std::shared_ptr<engine::Shader> shader;
+    prefabs::cubePrefabLoader(renderer, model, shader);
     for (auto position: cubePositions) {
-        prefabs::cubePrefab(cubeObj, m_registry, position);
+        prefabs::cubePrefab(model, shader, m_registry, position);
     }
 
     prefabs::cameraPrefab(m_registry);
