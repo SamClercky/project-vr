@@ -29,9 +29,9 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
     glm::mat3 toCamDirectionTrans{x, y, z};
 
     auto rotated_delta_pos = toCamDirectionTrans * delta_pos;
-    cam.position += rotated_delta_pos * dt.sec();
+    cam.position += 10.f * rotated_delta_pos * dt.sec();
 
-    float speed{10.f};// degrees per second
+    float speed{30.f};// degrees per second
     cam.yaw += speed * mouse_position.x * dt.sec();
     cam.pitch -= speed * mouse_position.y * dt.sec();
     cam.pitch = std::clamp(cam.pitch, -80.f, +80.f);// make sure it is not possible to look straight up
