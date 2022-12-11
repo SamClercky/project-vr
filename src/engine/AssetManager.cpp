@@ -21,16 +21,62 @@ namespace engine {
             // TODO: Type should be made dynamic so other kinds of textures can
             // be loaded as well
             texture = std::make_shared<Texture2D>(data, width, height, nrChannels, TextureType::Image);
+            texture->configure_texture(config);
             textureStore.push_back(texture);
         } else {
             std::stringstream ss;
-            ss << "Failed to load texture: " << path;
+            ss << "Failed to load texture: " << path
+               << " with reason: " << stbi_failure_reason();
             std::cerr << ss.str() << std::endl;
 
             stbi_image_free(data);// make sure it is cleaned
             throw std::exception(ss.str().c_str());
         }
         stbi_image_free(data);
+
+        return texture;
+    }
+
+
+    std::shared_ptr<Texture2D> AssetManager::loadCubeMap(std::filesystem::path &&front,
+                                                         std::filesystem::path &&back,
+                                                         std::filesystem::path &&left,
+                                                         std::filesystem::path &&right,
+                                                         std::filesystem::path &&top,
+                                                         std::filesystem::path &&bottom) {
+
+        TextureCubeMap cubeMap{};
+        std::filesystem::path paths[] = {front, back, left, right, top, bottom};
+        TextureCubeMapSide* sides[] = {&cubeMap.front, &cubeMap.back, &cubeMap.left, &cubeMap.right, &cubeMap.top, &cubeMap.bottom};
+
+        for (uint8_t i = 0; i < 6; i++) {
+            auto path = paths[i];
+            auto side = sides[i];
+
+            int width, height, nrChannels;
+            uint8_t *data = stbi_load(
+                    reinterpret_cast<const char *>(front.string().c_str()), &width, &height, &nrChannels, 0);
+
+            if (data) {
+                // be loaded as well
+                side->data = data;
+                side->width = width;
+                side->height = height;
+            } else {
+                std::stringstream ss;
+                ss << "Failed to load texture: " << path
+                   << " with reason: " << stbi_failure_reason();
+                std::cerr << ss.str() << std::endl;
+
+                for (uint8_t j = 0; j <= i; j++) // clear all already loaded textures
+                    stbi_image_free(sides[j]->data);
+                throw std::exception(ss.str().c_str());
+            }
+        }
+
+        auto texture = std::make_shared<Texture2D>(cubeMap);
+        for (auto & side : sides) // clear all textures
+            stbi_image_free(side->data);
 
         return texture;
     }

@@ -22,6 +22,12 @@ namespace engine {
 
         std::shared_ptr<Texture2D> loadTexture(std::filesystem::path &&path,
                                                TextureConfig &&config = TextureConfig{});
+        std::shared_ptr<Texture2D> loadCubeMap(std::filesystem::path &&front,
+                                               std::filesystem::path &&back,
+                                               std::filesystem::path &&left,
+                                               std::filesystem::path &&right,
+                                               std::filesystem::path &&top,
+                                               std::filesystem::path &&bottom);
         std::shared_ptr<Model> loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader);
         std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
                                            std::filesystem::path &&fragmentPath);

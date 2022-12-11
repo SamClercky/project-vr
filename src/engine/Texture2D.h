@@ -11,6 +11,7 @@ namespace engine {
         IGNORE = 0,
         Repeat = GL_REPEAT,
         MirroredRepeat = GL_MIRRORED_REPEAT,
+        ClampToEdge = GL_CLAMP_TO_EDGE,
     };
 
     enum class GLFilter {
@@ -20,14 +21,30 @@ namespace engine {
     };
 
     enum class TextureType {
-        Image, Specular, Diffuse
+        Image, Specular, Diffuse, CubeMap,
     };
 
     struct TextureConfig {
         GLTextureRepeat texture_wrap_s;
         GLTextureRepeat texture_wrap_t;
+        GLTextureRepeat texture_wrap_r;
         GLFilter texture_min_filter;
         GLFilter texture_mag_filter;
+    };
+
+    struct TextureCubeMapSide {
+        uint8_t* data;
+        int width;
+        int height;
+    };
+
+    struct TextureCubeMap {
+        TextureCubeMapSide front;
+        TextureCubeMapSide back;
+        TextureCubeMapSide left;
+        TextureCubeMapSide right;
+        TextureCubeMapSide top;
+        TextureCubeMapSide bottom;
     };
 
     struct BoundedTexture2DGuard {
@@ -72,22 +89,24 @@ namespace engine {
     public:
         Texture2D();
         explicit Texture2D(uint8_t const *data, int width, int height, int nrChannels, TextureType type);
+        explicit Texture2D(TextureCubeMap data);
         ~Texture2D();
         Texture2D(Texture2D const &other) = default;
         Texture2D(Texture2D &&other) noexcept {
-            textureID = other.textureID;
-            other.textureID = 0;
-            type = other.type;
+            m_textureID = other.m_textureID;
+            other.m_textureID = 0;
+            m_type = other.m_type;
         }
 
         void configure_texture(TextureConfig config) const;
         [[nodiscard]] BoundedTexture2DGuard bind(uint8_t location) const {
-            return {textureID, location};
+            return {m_textureID, location};
         }
 
     private:
-        uint32_t textureID;
-        TextureType type;
+        uint32_t m_textureID;
+        TextureType m_type;
+        GLenum m_textureBind;
     };
 
 }// namespace engine
