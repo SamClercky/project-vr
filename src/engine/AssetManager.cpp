@@ -4,8 +4,8 @@
 #include <stack>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 namespace engine {
     AssetManager GlobalAssetManager = AssetManager{};
@@ -47,7 +47,7 @@ namespace engine {
 
         TextureCubeMap cubeMap{};
         std::filesystem::path paths[] = {front, back, left, right, top, bottom};
-        TextureCubeMapSide* sides[] = {&cubeMap.front, &cubeMap.back, &cubeMap.left, &cubeMap.right, &cubeMap.top, &cubeMap.bottom};
+        TextureCubeMapSide *sides[] = {&cubeMap.front, &cubeMap.back, &cubeMap.left, &cubeMap.right, &cubeMap.top, &cubeMap.bottom};
 
         for (uint8_t i = 0; i < 6; i++) {
             auto path = paths[i];
@@ -68,14 +68,22 @@ namespace engine {
                    << " with reason: " << stbi_failure_reason();
                 std::cerr << ss.str() << std::endl;
 
-                for (uint8_t j = 0; j <= i; j++) // clear all already loaded textures
+                for (uint8_t j = 0; j <= i; j++)// clear all already loaded textures
                     stbi_image_free(sides[j]->data);
                 throw std::exception(ss.str().c_str());
             }
         }
 
         auto texture = std::make_shared<Texture2D>(cubeMap);
-        for (auto & side : sides) // clear all textures
+        texture->configure_texture({
+                .texture_wrap_s = GLTextureRepeat::ClampToEdge,
+                .texture_wrap_t = GLTextureRepeat::ClampToEdge,
+                .texture_wrap_r = GLTextureRepeat::ClampToEdge,
+                .texture_min_filter = GLFilter::LINEAR,
+                .texture_mag_filter = GLFilter::LINEAR,
+        });
+        textureStore.push_back(texture);
+        for (auto &side: sides) // clear all textures
             stbi_image_free(side->data);
 
         return texture;
@@ -83,9 +91,7 @@ namespace engine {
 
     std::shared_ptr<Model> AssetManager::loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader) {
         Assimp::Importer importer;
-        const auto *scene = importer.ReadFile(path.string().c_str(), aiProcess_Triangulate
-                                                                             | aiProcess_FlipUVs
-                                                                             | aiProcess_GenNormals);
+        const auto *scene = importer.ReadFile(path.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             std::stringstream ss;
             ss << "ERROR::ASSIMP::SCENE_NOT_LOADED::" << importer.GetErrorString();
@@ -94,13 +100,13 @@ namespace engine {
         }
 
         // processing nodes -> assimp uses as tree that needs to be processed
-        std::stack<aiNode*> recursiveAgenda;
-        recursiveAgenda.push(scene->mRootNode); // initial node
+        std::stack<aiNode *> recursiveAgenda;
+        recursiveAgenda.push(scene->mRootNode);// initial node
         auto model = std::make_shared<Model>(std::vector<std::shared_ptr<Mesh>>{});
 
         while (!recursiveAgenda.empty()) {
-            auto node = recursiveAgenda.top(); // get element
-            recursiveAgenda.pop(); // remove element
+            auto node = recursiveAgenda.top();// get element
+            recursiveAgenda.pop();            // remove element
 
             // process mesh
             for (uint32_t i = 0; i < node->mNumMeshes; i++) {
@@ -126,8 +132,7 @@ namespace engine {
                             glm::vec2{
                                     aMesh->mTextureCoords[0][j].x,
                                     aMesh->mTextureCoords[0][j].y,
-                            }
-                    };
+                            }};
                     vertices.push_back(vertex);
                 }
 

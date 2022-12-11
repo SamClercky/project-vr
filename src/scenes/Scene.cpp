@@ -8,6 +8,7 @@
 #include "systems/RotateSystem.h"
 #include "systems/ViewportUpdateSystem.h"
 #include "prefabs/RabbitPrefab.h"
+#include "prefabs/CubeMapPrefab.h"
 
 using namespace scenes;
 
@@ -32,6 +33,11 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Shader> rabbitShader;
     prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
     prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
+
+    std::shared_ptr<engine::Model> cubeMapModel;
+    std::shared_ptr<engine::Shader> cubeMapShader;
+    prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
+    prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
     prefabs::cameraPrefab(m_registry);
 }

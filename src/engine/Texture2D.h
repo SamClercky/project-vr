@@ -50,34 +50,37 @@ namespace engine {
     struct BoundedTexture2DGuard {
         uint32_t textureID;
         GLenum location;
+        GLenum textureBind;
         bool engaged;
 
         // Creates unengaged guard
         BoundedTexture2DGuard()
-                : textureID(0), location(0), engaged(false) {}
+                : textureID(0), location(0), engaged(false), textureBind(GL_TEXTURE_2D) {}
 
-        BoundedTexture2DGuard(uint32_t textureID, uint8_t location)
-            : textureID(textureID), location(location), engaged(true) {
+        BoundedTexture2DGuard(uint32_t textureID, uint8_t location, GLenum textureBind)
+            : textureID(textureID), location(location), engaged(true), textureBind(textureBind) {
             if (location > 15) throw std::runtime_error("Texture out of range");
             this->location = GL_TEXTURE0 + location;
             glActiveTexture(this->location);
-            glBindTexture(GL_TEXTURE_2D, textureID);
+            glBindTexture(textureBind, textureID);
         }
         ~BoundedTexture2DGuard() noexcept {
             if (!engaged) return;
             glActiveTexture(location);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindTexture(textureBind, 0);
         }
 
         BoundedTexture2DGuard(BoundedTexture2DGuard &&other) noexcept {
             this->textureID = other.textureID;
             this->location = other.location;
+            this->textureBind = other.textureBind;
             other.engaged = false;
         }
 
         BoundedTexture2DGuard& operator =(BoundedTexture2DGuard &&other) noexcept {
             this->textureID = other.textureID;
             this->location = other.location;
+            this->textureBind = other.textureBind;
             this->engaged = true;
             other.engaged = false;
 
@@ -94,13 +97,14 @@ namespace engine {
         Texture2D(Texture2D const &other) = default;
         Texture2D(Texture2D &&other) noexcept {
             m_textureID = other.m_textureID;
+            m_textureBind = other.m_textureBind;
             other.m_textureID = 0;
             m_type = other.m_type;
         }
 
         void configure_texture(TextureConfig config) const;
         [[nodiscard]] BoundedTexture2DGuard bind(uint8_t location) const {
-            return {m_textureID, location};
+            return {m_textureID, location, m_textureBind};
         }
 
     private:
