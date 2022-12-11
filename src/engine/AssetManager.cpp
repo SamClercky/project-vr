@@ -55,7 +55,7 @@ namespace engine {
 
             int width, height, nrChannels;
             uint8_t *data = stbi_load(
-                    reinterpret_cast<const char *>(front.string().c_str()), &width, &height, &nrChannels, 0);
+                    reinterpret_cast<const char *>(path.string().c_str()), &width, &height, &nrChannels, 0);
 
             if (data) {
                 // be loaded as well
