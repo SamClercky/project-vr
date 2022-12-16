@@ -166,8 +166,16 @@ namespace engine {
     std::shared_ptr<Shader> AssetManager::loadShader(std::filesystem::path &&vertexPath,
                                                      std::filesystem::path &&fragmentPath) {
         auto shader = std::make_shared<Shader>(
-                reinterpret_cast<const char *>(vertexPath.string().c_str()),
-                reinterpret_cast<const char *>(fragmentPath.string().c_str()));
+                std::move(vertexPath),
+                std::move(fragmentPath));
+        shaderStore.push_back(shader);
+        return shader;
+    }
+    std::shared_ptr<Shader> AssetManager::loadShader(std::filesystem::path &&vertexPath, std::filesystem::path &&geometryPath, std::filesystem::path &&fragmentPath) {
+        auto shader = std::make_shared<Shader>(
+                std::move(vertexPath),
+                std::move(geometryPath),
+                std::move(fragmentPath));
         shaderStore.push_back(shader);
         return shader;
     }

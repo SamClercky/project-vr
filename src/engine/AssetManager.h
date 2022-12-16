@@ -31,6 +31,9 @@ namespace engine {
         std::shared_ptr<Model> loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader);
         std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
                                            std::filesystem::path &&fragmentPath);
+        std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
+                                           std::filesystem::path &&geometryPath,
+                                           std::filesystem::path &&fragmentPath);
 
         void submitMesh(const std::shared_ptr<Mesh>& mesh) {
             meshStore.push_back(mesh);

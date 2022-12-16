@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include <glad/glad.h>
 #include <string>
+#include <filesystem>
 
 namespace engine {
 
@@ -11,7 +12,10 @@ namespace engine {
     public:
         unsigned int ID;
 
-        Shader(const char *vertexPath, const char *fragmentPath);
+        Shader(std::filesystem::path &&vertex, std::filesystem::path &&fragment);
+        Shader(std::filesystem::path &&vertex,
+               std::filesystem::path &&geometry,
+               std::filesystem::path &&fragment);
         Shader(Shader &&other) = default;
 
         void use() const;

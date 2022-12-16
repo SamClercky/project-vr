@@ -75,6 +75,10 @@ namespace engine {
             return BoundedMeshGuard{ID, hasEBO, numberOfTriangles, textures};
         }
 
+        void attachTexture(std::shared_ptr<Texture2D> texture) {
+            textures.push_back(texture);
+        }
+
     private:
         GLuint ID{};
         std::vector<Vertex> vertexData;

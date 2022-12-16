@@ -5,12 +5,13 @@ out vec4 gl_Position;
 in vec3 position;
 out vec3 vPosition;
 
-in vec3 texCoord;
-out vec3 vTexCoord;
+in vec2 texCoord;
+out vec2 vTexCoord;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float time;
 
 void main() {
     gl_Position = projection * view * model * (10.f*vec4(position, 1.0));

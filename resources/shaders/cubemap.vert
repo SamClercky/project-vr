@@ -9,6 +9,7 @@ out vec3 vTexCoord;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform float time;
 
 void main() {
     vTexCoord = position;

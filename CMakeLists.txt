@@ -73,6 +73,9 @@ set(PROJECT-SRC
 
         src/prefabs/CameraPrefab.h src/prefabs/CameraPrefab.cpp
         src/prefabs/CubePrefab.h src/prefabs/CubePrefab.cpp
+        src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h
+        src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h
+        src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
 
         src/scenes/Scene.h src/scenes/Scene.cpp
 
@@ -81,7 +84,7 @@ set(PROJECT-SRC
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
-        src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h)
+        )
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)

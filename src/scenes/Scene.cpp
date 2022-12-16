@@ -9,6 +9,7 @@
 #include "systems/ViewportUpdateSystem.h"
 #include "prefabs/RabbitPrefab.h"
 #include "prefabs/CubeMapPrefab.h"
+#include "prefabs/SmokePrefab.h"
 
 using namespace scenes;
 
@@ -33,6 +34,11 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Shader> rabbitShader;
     prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
     prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
+
+    std::shared_ptr<engine::Model> smokeModel;
+    std::shared_ptr<engine::Shader> smokeShader;
+    prefabs::smokePrefabLoader(smokeModel, smokeShader);
+    prefabs::smokePrefab(smokeModel, smokeShader, m_registry, glm::vec3{3.f, 3.f, 3.f});
 
     std::shared_ptr<engine::Model> cubeMapModel;
     std::shared_ptr<engine::Shader> cubeMapShader;

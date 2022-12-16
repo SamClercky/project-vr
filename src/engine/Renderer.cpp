@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "GLFW/glfw3.h"
 
 #include <utility>
 
@@ -33,9 +34,10 @@ void Renderer::render() {
 
         const auto &shader = obj.asset.shader;
         shader->use();
-        shader->setMat4f(std::string{"model"}, obj.modelView);
-        shader->setMat4f(std::string{"view"}, currFrame.view);
-        shader->setMat4f(std::string{"projection"}, currFrame.perspective);
+        shader->setMat4f("model", obj.modelView);
+        shader->setMat4f("view", currFrame.view);
+        shader->setMat4f("projection", currFrame.perspective);
+        shader->setFloat("time", static_cast<float>(glfwGetTime()));
 
         meshGuard.draw();
     }
