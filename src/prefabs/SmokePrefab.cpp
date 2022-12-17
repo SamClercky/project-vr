@@ -4,7 +4,6 @@
 #include "components/Renderable.h"
 #include "components/RotateAnimation.h"
 #include "engine/Mesh.h"
-#include <utility>
 #include "engine/AssetManager.h"
 
 namespace {

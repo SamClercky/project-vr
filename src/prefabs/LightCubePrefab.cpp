@@ -4,6 +4,7 @@
 #include "engine/AssetManager.h"
 #include "components/Position.h"
 #include "components/Renderable.h"
+#include "components/RotateAnimation.h"
 #include <entt/entt.hpp>
 
 namespace {
@@ -64,7 +65,7 @@ void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
     registry.emplace<components::Position>(entity, position);
     registry.emplace<components::Renderable>(
             entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
-    
+    registry.emplace<components::RotateAnimation>(entity, 10.f);
 }
 
 void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
