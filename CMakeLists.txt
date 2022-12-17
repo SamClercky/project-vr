@@ -62,6 +62,8 @@ set(PROJECT-SRC
         src/components/Position.h
         src/components/Renderable.h
         src/components/RotateAnimation.h
+        src/components/Material.h
+        src/components/Light.h
 
         src/engine/AssetManager.h src/engine/AssetManager.cpp
         src/engine/Mesh.h src/engine/Mesh.cpp
@@ -76,6 +78,8 @@ set(PROJECT-SRC
         src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h
         src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h
         src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
+        src/prefabs/LightCubePrefab.h src/prefabs/LightCubePrefab.cpp
+        src/prefabs/DirLightPrefab.h src/prefabs/DirLightPrefab.cpp
 
         src/scenes/Scene.h src/scenes/Scene.cpp
 
@@ -84,6 +88,7 @@ set(PROJECT-SRC
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
+        src/systems/LightSystem.h src/systems/LightSystem.cpp
         )
 
 # Project building

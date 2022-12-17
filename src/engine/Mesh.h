@@ -42,6 +42,11 @@ namespace engine {
               normal(normal),
               texCoord(texCoord) {}
 
+        explicit Vertex(float x, float y, float z, float nx, float ny, float nz, float tx, float ty)
+            : position(glm::vec3{x, y, z}),
+              normal(glm::vec3{nx, ny, nz}),
+              texCoord(glm::vec2{tx, ty}) {}
+
         explicit Vertex(float x, float y, float z)
             : position(glm::vec3{x, y, z}),
               normal(glm::vec3{0.f}),

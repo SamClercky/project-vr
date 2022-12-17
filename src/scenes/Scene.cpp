@@ -2,14 +2,17 @@
 #include "components/DeltaTime.h"
 #include "prefabs/CameraPrefab.h"
 #include "prefabs/CubePrefab.h"
+#include "prefabs/LightCubePrefab.h"
 #include "systems/CameraSystem.h"
 #include "systems/DrawSystem.h"
 #include "systems/InputUpdaterSystem.h"
 #include "systems/RotateSystem.h"
 #include "systems/ViewportUpdateSystem.h"
+#include "systems/LightSystem.h"
 #include "prefabs/RabbitPrefab.h"
 #include "prefabs/CubeMapPrefab.h"
 #include "prefabs/SmokePrefab.h"
+#include "prefabs/DirLightPrefab.h"
 
 using namespace scenes;
 
@@ -25,10 +28,14 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
-    prefabs::cubePrefabLoader(cubeModel, cubeShader);
+    //prefabs::cubePrefabLoader(cubeModel, cubeShader);
+    prefabs::lightCubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
-        prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
+        //prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
+        prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position);
     }
+    //light test
+    prefabs::dirLightPrefab(m_registry);
 
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
@@ -57,5 +64,7 @@ void Scene::update(uint64_t deltaTime) {
 
 void Scene::render(engine::Renderer::RenderGuard &renderer) {
     systems::cameraSystem(renderer, m_registry);
+    systems::lightSystem(renderer, m_registry);
     systems::drawSystem(renderer, m_registry);
+    //add light system call?
 }

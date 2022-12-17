@@ -19,6 +19,8 @@ void Renderer::render() {
         nextFrame.objects.clear();
         currFrame.perspective = nextFrame.perspective;
         currFrame.view = nextFrame.view;
+        std::swap(currFrame.lights, nextFrame.lights);
+        nextFrame.lights.clear();
     }
 
     // current frame only contains new data if nextFrame was ready, otherwise
@@ -39,6 +41,21 @@ void Renderer::render() {
         shader->setMat4f("projection", currFrame.perspective);
         shader->setFloat("time", static_cast<float>(glfwGetTime()));
 
+        for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
+            const auto &light = currFrame.lights[i];
+            shader->setVec3f(std::format("lights[{0}].position", i), light.position);
+            shader->setVec3f(std::format("lights[{0}].direction", i), light.direction);
+
+            shader->setVec3f(std::format("lights[{0}].ambient", i), light.ambient);
+            shader->setVec3f(std::format("lights[{0}].diffuse", i), light.diffuse);
+            shader->setVec3f(std::format("lights[{0}].specular", i), light.specular);
+
+            shader->setFloat(std::format("lights[{0}].constant", i), light.constant);
+            shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
+            shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
+        }
+        shader->setInt("numLights", currFrame.lights.size());
+
         meshGuard.draw();
     }
 }
@@ -53,6 +70,11 @@ void Renderer::RenderGuard::submit(RenderAssetRef obj, glm::mat4 modelView) {
             .modelView = modelView,
             .asset = std::move(obj),
     });
+}
+
+//submit light, Dir/Point/.. check subtype?
+void Renderer::RenderGuard::submit_light(LightObject li) {
+    renderBin.lights.push_back(li);
 }
 
 void Renderer::RenderGuard::submit_camera(glm::mat4 perspective,

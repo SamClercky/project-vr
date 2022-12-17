@@ -17,10 +17,25 @@ namespace engine {
         RenderAssetRef asset;
     };
 
+    struct LightObject {
+        //components::DirLight dirLight;       
+        glm::vec3 position;
+        glm::vec3 direction;
+
+        glm::vec3 ambient;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+
+        float constant;
+        float linear;
+        float quadratic;
+    };
+
     struct Frame {
         glm::mat4 view;
         glm::mat4 perspective;
         std::vector<RenderObject> objects;
+        std::vector<LightObject> lights;
     };
 
     class Renderer {
@@ -31,6 +46,7 @@ namespace engine {
 
             void submit(RenderAssetRef obj, glm::mat4 modelView);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
+            void submit_light(LightObject li);
 
         private:
             Frame &renderBin;
