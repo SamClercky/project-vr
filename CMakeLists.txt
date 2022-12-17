@@ -63,8 +63,7 @@ set(PROJECT-SRC
         src/components/Renderable.h
         src/components/RotateAnimation.h
         src/components/Material.h
-        src/components/DirLight.h
-        src/components/PointLight.h
+        src/components/Light.h
 
         src/engine/AssetManager.h src/engine/AssetManager.cpp
         src/engine/Mesh.h src/engine/Mesh.cpp

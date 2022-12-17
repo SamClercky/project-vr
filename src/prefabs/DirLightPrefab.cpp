@@ -1,6 +1,6 @@
 #include "DirLightPrefab.h"
 
-#include "components/DirLight.h"
+#include "components/Light.h"
 
 #include <iostream>
 
@@ -19,7 +19,7 @@ void prefabs::dirLightPrefab(entt::registry& registry,
     glm::vec3 diffuse,
     glm::vec3 specular) {
     auto entity = registry.create();
-    registry.emplace<components::DirLight>(entity, direction, ambient, diffuse, specular);
+    registry.emplace<components::Light>(entity, direction, ambient, diffuse, specular);
 }
 
 void prefabs::dirLightPrefab(entt::registry &registry) {

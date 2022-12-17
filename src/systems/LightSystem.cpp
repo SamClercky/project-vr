@@ -1,14 +1,14 @@
 #include "LightSystem.h"
-#include "components/DirLight.h"
+#include "components/Light.h"
 
 namespace systems {
 
     void lightSystem(engine::Renderer::RenderGuard& renderer, entt::registry& registry) {
-        const auto view = registry.view<components::DirLight>();
+        const auto view = registry.view<components::Light>();
         for (const auto& entity : view) {
-            const auto &dirLight = view.get<components::DirLight>(entity);
+            const auto &light = view.get<components::Light>(entity);
             //submit
-            renderer.submit_dirLight(engine::LightObject{dirLight});
+            renderer.submit_dirLight(light.light);
         }
     }
 
