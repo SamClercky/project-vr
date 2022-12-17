@@ -41,16 +41,16 @@ void Renderer::render() {
         
         for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
             const auto &light = currFrame.lights[i];
-            shader->setVec3f(std::format("lights.position[{0}]", i), light.position);
-            shader->setVec3f(std::format("lights.direction[{0}]", i), light.direction);
+            shader->setVec3f(std::format("lights[{0}].position", i), light.position);
+            shader->setVec3f(std::format("lights[{0}].direction", i), light.direction);
 
-            shader->setVec3f(std::format("lights.ambient[{0}]", i), light.ambient);
-            shader->setVec3f(std::format("lights.diffuse[{0}]", i), light.diffuse);
-            shader->setVec3f(std::format("lights.specular[{0}]", i), light.specular);
+            shader->setVec3f(std::format("lights[{0}].ambient", i), light.ambient);
+            shader->setVec3f(std::format("lights[{0}].diffuse", i), light.diffuse);
+            shader->setVec3f(std::format("lights[{0}].specular", i), light.specular);
 
-            shader->setFloat(std::format("lights.constant[{0}]", i), light.constant);
-            shader->setFloat(std::format("lights.linear[{0}]", i), light.linear);
-            shader->setFloat(std::format("lights.quadratic[{0}]", i), light.quadratic);
+            shader->setFloat(std::format("lights[{0}].constant", i), light.constant);
+            shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
+            shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
         }
         shader->setInt("numLights", currFrame.lights.size());
         //shader->setVec3f(std::string{"viewPos"}, )
