@@ -29,8 +29,8 @@ struct Light {
 
 uniform vec3 viewPos;
 //uniform Material material;
-uniform Light light[];
-uniform unsigned int numLights;
+uniform Light lights[];
+uniform int numLights;
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
 
@@ -39,7 +39,11 @@ void main() {
 	vec3 viewDir = normalize(viewPos - vPosition);
 
 	//phase 1: directional lighting
-	//vec3 result = CalcDirLight(light, norm, viewDir);
+    vec3 result = vec3(0.0f);
+    for (int i=0; i<numLights; i++) {
+        Light l = lights[i];
+        result += CalcDirLight(l, norm, viewDir);
+    }
 
 	FragColor = texture(ourTexture, vTexCoord) * vec4(1.0);
 }

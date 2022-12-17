@@ -10,12 +10,15 @@ namespace components {
         engine::LightObject light;
 
 		explicit Light(glm::vec3 direction,
-                          glm::vec3 ambient,
-                          glm::vec3 diffuse,
-                          glm::vec3 specular)
+                       glm::vec3 ambient,
+                       glm::vec3 diffuse,
+                       glm::vec3 specular)
             : light(engine::LightObject{
-            
-                }) {}
+                      .direction = direction,
+                      .ambient = ambient,
+                      .diffuse = diffuse,
+                      .specular = specular,
+              }) {}
             
 
         explicit Light(glm::vec3 position,
@@ -25,7 +28,15 @@ namespace components {
                        glm::vec3 ambient,
                        glm::vec3 diffuse,
                        glm::vec3 specular)
-            : light(engine::LightObject{}) {}
+            : light(engine::LightObject{
+                      .position = position,
+                      .ambient = ambient,
+                      .diffuse = diffuse,
+                      .specular = specular,
+                      .constant = constant,
+                      .linear = linear,
+                      .quadratic = quadratic,
+              }) {}
 
 	};
 

@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace {
+namespace prefabs {
 
     glm::vec3 direction = glm::vec3(-0.2f, -1.0f, -0.3f);
     glm::vec3 ambient = glm::vec3(0.05f, 0.05f, 0.05f);
