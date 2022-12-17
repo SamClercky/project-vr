@@ -53,7 +53,6 @@ void Renderer::render() {
             shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
         }
         shader->setInt("numLights", currFrame.lights.size());
-        //shader->setVec3f(std::string{"viewPos"}, )
 
         meshGuard.draw();
     }
