@@ -46,7 +46,7 @@ namespace engine {
 
             void submit(RenderAssetRef obj, glm::mat4 modelView);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
-            void submit_dirLight(LightObject li);
+            void submit_light(LightObject li);
 
         private:
             Frame &renderBin;

@@ -8,7 +8,7 @@ namespace systems {
         for (const auto& entity : view) {
             const auto &light = view.get<components::Light>(entity);
             //submit
-            renderer.submit_dirLight(light.light);
+            renderer.submit_light(light.light);
         }
     }
 

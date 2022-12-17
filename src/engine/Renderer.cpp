@@ -27,15 +27,30 @@ void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDepthFunc(GL_LEQUAL);
-    //yeet light data in shader..
+    //
     for (const auto &obj: currFrame.objects) {
         auto meshGuard = obj.asset.mesh->bind();
 
         const auto &shader = obj.asset.shader;
-        shader->use();
+        shader->use(); 
         shader->setMat4f(std::string{"model"}, obj.modelView);
         shader->setMat4f(std::string{"view"}, currFrame.view);
         shader->setMat4f(std::string{"projection"}, currFrame.perspective);
+        
+        for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
+            const auto &light = currFrame.lights[i];
+            shader->setVec3f(std::format("lights.position[{0}]", i), light.position);
+            shader->setVec3f(std::format("lights.direction[{0}]", i), light.direction);
+
+            shader->setVec3f(std::format("lights.ambient[{0}]", i), light.ambient);
+            shader->setVec3f(std::format("lights.diffuse[{0}]", i), light.diffuse);
+            shader->setVec3f(std::format("lights.specular[{0}]", i), light.specular);
+
+            shader->setFloat(std::format("lights.constant[{0}]", i), light.constant);
+            shader->setFloat(std::format("lights.linear[{0}]", i), light.linear);
+            shader->setFloat(std::format("lights.quadratic[{0}]", i), light.quadratic);
+        }
+        shader->setInt("numLights", currFrame.lights.size());
 
         meshGuard.draw();
     }
@@ -54,7 +69,7 @@ void Renderer::RenderGuard::submit(RenderAssetRef obj, glm::mat4 modelView) {
 }
 
 //submit light, Dir/Point/.. check subtype?
-void Renderer::RenderGuard::submit_dirLight(LightObject li) {
+void Renderer::RenderGuard::submit_light(LightObject li) {
     renderBin.lights.push_back(li);
 }
 
