@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture2D.h"
+#include "components/DirLight.h"
 
 namespace engine {
 
@@ -17,10 +18,15 @@ namespace engine {
         RenderAssetRef asset;
     };
 
+    struct LightObject {
+        components::DirLight dirLight;       
+    };
+
     struct Frame {
         glm::mat4 view;
         glm::mat4 perspective;
         std::vector<RenderObject> objects;
+        std::vector<LightObject> lights;
     };
 
     class Renderer {
@@ -31,6 +37,7 @@ namespace engine {
 
             void submit(RenderAssetRef obj, glm::mat4 modelView);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
+            void submit_dirLight(LightObject li);
 
         private:
             Frame &renderBin;

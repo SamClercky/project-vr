@@ -27,7 +27,7 @@ void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDepthFunc(GL_LEQUAL);
-
+    //yeet light data in shader..
     for (const auto &obj: currFrame.objects) {
         auto meshGuard = obj.asset.mesh->bind();
 
@@ -51,6 +51,11 @@ void Renderer::RenderGuard::submit(RenderAssetRef obj, glm::mat4 modelView) {
             .modelView = modelView,
             .asset = std::move(obj),
     });
+}
+
+//submit light, Dir/Point/.. check subtype?
+void Renderer::RenderGuard::submit_dirLight(LightObject li) {
+    renderBin.lights.push_back(li);
 }
 
 void Renderer::RenderGuard::submit_camera(glm::mat4 perspective,

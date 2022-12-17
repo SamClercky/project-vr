@@ -13,6 +13,8 @@ namespace systems {
             const auto &position = view.get<components::Position>(entity);
             for (const auto &part: renderable.parts)
                 part->draw(renderer, renderable.shaderRef, position.pos, std::vector<glm::mat4>{});
+        //get lights and "submit" to renderer idk
+
         }
     }
 
