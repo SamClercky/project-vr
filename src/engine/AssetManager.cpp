@@ -10,7 +10,10 @@
 namespace engine {
     AssetManager GlobalAssetManager = AssetManager{};
 
-    std::shared_ptr<Texture2D> AssetManager::loadTexture(std::filesystem::path &&path, TextureConfig &&config) {
+    std::shared_ptr<Texture2D> AssetManager::loadTexture(const std::filesystem::path &path, TextureConfig &&config) {
+        if (textureStore.contains(path))
+            return textureStore.at(path);
+
         int width, height, nrChannels;
         uint8_t *data = stbi_load(
                 reinterpret_cast<const char *>(path.string().c_str()),
@@ -22,7 +25,7 @@ namespace engine {
             // be loaded as well
             texture = std::make_shared<Texture2D>(data, width, height, nrChannels, TextureType::Image);
             texture->configure_texture(config);
-            textureStore.push_back(texture);
+            textureStore.insert(std::make_pair(path, texture));
         } else {
             std::stringstream ss;
             ss << "Failed to load texture: " << path
@@ -38,12 +41,16 @@ namespace engine {
     }
 
 
-    std::shared_ptr<Texture2D> AssetManager::loadCubeMap(std::filesystem::path &&front,
-                                                         std::filesystem::path &&back,
-                                                         std::filesystem::path &&left,
-                                                         std::filesystem::path &&right,
-                                                         std::filesystem::path &&top,
-                                                         std::filesystem::path &&bottom) {
+    std::shared_ptr<Texture2D> AssetManager::loadCubeMap(const std::filesystem::path &front,
+                                                         const std::filesystem::path &back,
+                                                         const std::filesystem::path &left,
+                                                         const std::filesystem::path &right,
+                                                         const std::filesystem::path &top,
+                                                         const std::filesystem::path &bottom) {
+
+        const auto key = front / back / left / right / top / bottom;
+        if (textureStore.contains(key))
+            return textureStore.at(key);
 
         TextureCubeMap cubeMap{};
         std::filesystem::path paths[] = {front, back, left, right, top, bottom};
@@ -82,14 +89,17 @@ namespace engine {
                 .texture_min_filter = GLFilter::LINEAR,
                 .texture_mag_filter = GLFilter::LINEAR,
         });
-        textureStore.push_back(texture);
-        for (auto &side: sides) // clear all textures
+        textureStore.insert(std::make_pair(key, texture));
+        for (auto &side: sides)// clear all textures
             stbi_image_free(side->data);
 
         return texture;
     }
 
-    std::shared_ptr<Model> AssetManager::loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader) {
+    std::shared_ptr<Model> AssetManager::loadModel(const std::filesystem::path &path, std::shared_ptr<Shader> &shader) {
+        if (modelStore.contains(path))
+            return modelStore.at(path);
+
         Assimp::Importer importer;
         const auto *scene = importer.ReadFile(path.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -148,7 +158,7 @@ namespace engine {
 
                 // Put everything into the model
                 auto mesh = std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures), shader);
-                meshStore.push_back(mesh);
+                meshStore.insert(std::make_pair(path, mesh));
                 model->meshes.push_back(mesh);
             }
 
@@ -163,20 +173,26 @@ namespace engine {
         return model;
     }
 
-    std::shared_ptr<Shader> AssetManager::loadShader(std::filesystem::path &&vertexPath,
-                                                     std::filesystem::path &&fragmentPath) {
-        auto shader = std::make_shared<Shader>(
-                std::move(vertexPath),
-                std::move(fragmentPath));
-        shaderStore.push_back(shader);
+    std::shared_ptr<Shader> AssetManager::loadShader(const std::filesystem::path &vertexPath,
+                                                     const std::filesystem::path &fragmentPath) {
+        const auto key = vertexPath / fragmentPath;
+        if (shaderStore.contains(key))
+            return shaderStore.at(key);
+
+        auto shader = std::make_shared<Shader>(vertexPath, fragmentPath);
+        shaderStore.insert(std::make_pair(key, shader));
         return shader;
     }
-    std::shared_ptr<Shader> AssetManager::loadShader(std::filesystem::path &&vertexPath, std::filesystem::path &&geometryPath, std::filesystem::path &&fragmentPath) {
+    std::shared_ptr<Shader> AssetManager::loadShader(const std::filesystem::path &vertexPath, const std::filesystem::path &geometryPath, const std::filesystem::path &fragmentPath) {
+        const auto key = vertexPath / geometryPath / fragmentPath;
+        if (shaderStore.contains(key))
+            return shaderStore.at(key);
+
         auto shader = std::make_shared<Shader>(
-                std::move(vertexPath),
-                std::move(geometryPath),
-                std::move(fragmentPath));
-        shaderStore.push_back(shader);
+                vertexPath,
+                geometryPath,
+                fragmentPath);
+        shaderStore.insert(std::make_pair(key, shader));
         return shader;
     }
 }// namespace engine

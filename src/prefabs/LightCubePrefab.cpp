@@ -85,6 +85,6 @@ void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
             std::vector<uint32_t>{},
             std::vector<std::shared_ptr<engine::Texture2D>>{cubeTexture},
             outShader);
-    engine::GlobalAssetManager.submitMesh(mesh);
+    engine::GlobalAssetManager.submitMesh(RESOURCES_SRC_ROOT / "prefabs" / "LightCube.cpp", mesh);
     outModel = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
 }

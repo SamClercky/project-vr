@@ -89,7 +89,7 @@ set(PROJECT-SRC
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
         src/systems/LightSystem.h src/systems/LightSystem.cpp
-        )
+        src/prefabs/EnvironmentPrefab.cpp src/prefabs/EnvironmentPrefab.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)

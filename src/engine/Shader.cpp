@@ -4,14 +4,13 @@
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 using namespace engine;
 
-Shader::Shader(std::filesystem::path &&vertex, std::filesystem::path &&fragment)
-    : Shader(std::move(vertex), std::filesystem::path{}, std::move(fragment)) {}
+Shader::Shader(const std::filesystem::path &vertex, const std::filesystem::path &fragment)
+    : Shader(vertex, std::filesystem::path{}, fragment) {}
 
-bool loadFile(std::filesystem::path &&path, std::string &outCode) {
+bool loadFile(const std::filesystem::path &path, std::string &outCode) {
     if (path.empty()) return true;
 
     std::ifstream file;
@@ -56,17 +55,13 @@ bool compileShader(std::string& code, GLenum shaderType, uint32_t &outID) {
     return success;
 }
 
-Shader::Shader(std::filesystem::path &&vertexPath, std::filesystem::path &&geometryPath, std::filesystem::path &&fragmentPath) {
+Shader::Shader(const std::filesystem::path &vertexPath, const std::filesystem::path &geometryPath, const std::filesystem::path &fragmentPath) {
     std::string vertexCode;
     std::string fragmentCode;
     std::string geometryCode;
-    loadFile(std::move(vertexPath), vertexCode);
-    loadFile(std::move(geometryPath), geometryCode);
-    loadFile(std::move(fragmentPath), fragmentCode);
-
-    const char *vShaderCode = vertexCode.c_str();
-    const char *fShaderCode = fragmentCode.c_str();
-    const char *gShaderCode = geometryCode.c_str();
+    loadFile(vertexPath, vertexCode);
+    loadFile(geometryPath, geometryCode);
+    loadFile(fragmentPath, fragmentCode);
 
     unsigned int vertex, fragment, geometry;
     compileShader(vertexCode, GL_VERTEX_SHADER, vertex);

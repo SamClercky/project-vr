@@ -6,52 +6,57 @@
 #include "Texture2D.h"
 #include <filesystem>
 #include <memory>
+#include <unordered_map>
 
 #define RESOURCES_ROOT std::filesystem::path{"resources"}
+#define RESOURCES_SRC_ROOT std::filesystem::path{"src"}
 
 namespace engine {
     class AssetManager {
     public:
         AssetManager()
-            : modelStore(std::vector<std::shared_ptr<Model>>{}),
-              meshStore(std::vector<std::shared_ptr<Mesh>>{}),
-              shaderStore(std::vector<std::shared_ptr<Shader>>{}),
-              textureStore(std::vector<std::shared_ptr<Texture2D>>{}) {}
+            : modelStore(Store<Model>{}),
+              meshStore(Store<Mesh>{}),
+              shaderStore(Store<Shader>{}),
+              textureStore(Store<Texture2D>{}) {}
         AssetManager(AssetManager const &other) = delete;
         AssetManager(AssetManager &&other) = delete;
 
-        std::shared_ptr<Texture2D> loadTexture(std::filesystem::path &&path,
+        std::shared_ptr<Texture2D> loadTexture(const std::filesystem::path &path,
                                                TextureConfig &&config = TextureConfig{});
-        std::shared_ptr<Texture2D> loadCubeMap(std::filesystem::path &&front,
-                                               std::filesystem::path &&back,
-                                               std::filesystem::path &&left,
-                                               std::filesystem::path &&right,
-                                               std::filesystem::path &&top,
-                                               std::filesystem::path &&bottom);
-        std::shared_ptr<Model> loadModel(std::filesystem::path &&path, std::shared_ptr<Shader> &shader);
-        std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
-                                           std::filesystem::path &&fragmentPath);
-        std::shared_ptr<Shader> loadShader(std::filesystem::path &&vertexPath,
-                                           std::filesystem::path &&geometryPath,
-                                           std::filesystem::path &&fragmentPath);
+        std::shared_ptr<Texture2D> loadCubeMap(const std::filesystem::path &front,
+                                               const std::filesystem::path &back,
+                                               const std::filesystem::path &left,
+                                               const std::filesystem::path &right,
+                                               const std::filesystem::path &top,
+                                               const std::filesystem::path &bottom);
+        std::shared_ptr<Model> loadModel(const std::filesystem::path &path, std::shared_ptr<Shader> &shader);
+        std::shared_ptr<Shader> loadShader(const std::filesystem::path &vertexPath,
+                                           const std::filesystem::path &fragmentPath);
+        std::shared_ptr<Shader> loadShader(const std::filesystem::path &vertexPath,
+                                           const std::filesystem::path &geometryPath,
+                                           const std::filesystem::path &fragmentPath);
 
-        void submitMesh(const std::shared_ptr<Mesh>& mesh) {
-            meshStore.push_back(mesh);
+        void submitMesh(const std::filesystem::path &path, const std::shared_ptr<Mesh>& mesh) {
+            meshStore.insert(std::make_pair(path, mesh));
         }
-        void submitModel(const std::shared_ptr<Model>& model) {
-            modelStore.push_back(model);
+        void submitModel(const std::filesystem::path &path, const std::shared_ptr<Model>& model) {
+            modelStore.insert(std::make_pair(path, model));
         }
-        void submitTexture(const std::shared_ptr<Texture2D>& texture2D) {
-            textureStore.push_back(texture2D);
+        void submitTexture(const std::filesystem::path &path, const std::shared_ptr<Texture2D>& texture2D) {
+            textureStore.insert(std::make_pair(path, texture2D));
         }
-        void submitShader(const std::shared_ptr<Shader>& shader) {
-            shaderStore.push_back(shader);
+        void submitShader(const std::filesystem::path &path, const std::shared_ptr<Shader>& shader) {
+            shaderStore.insert(std::make_pair(path, shader));
         }
     private:
-        std::vector<std::shared_ptr<Model>> modelStore;
-        std::vector<std::shared_ptr<Mesh>> meshStore;
-        std::vector<std::shared_ptr<Shader>> shaderStore;
-        std::vector<std::shared_ptr<Texture2D>> textureStore;
+        template<class T>
+        using Store = std::unordered_map<std::filesystem::path, std::shared_ptr<T>>;
+
+        Store<Model> modelStore;
+        Store<Mesh> meshStore;
+        Store<Shader> shaderStore;
+        Store<Texture2D> textureStore;
     };
 
     extern AssetManager GlobalAssetManager;

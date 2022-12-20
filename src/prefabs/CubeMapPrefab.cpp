@@ -279,7 +279,7 @@ namespace prefabs {
                 std::vector<uint32_t>{},
                 std::vector<std::shared_ptr<engine::Texture2D>>{texture},
                 outShader);
-        engine::GlobalAssetManager.submitMesh(mesh);
+        engine::GlobalAssetManager.submitMesh(RESOURCES_SRC_ROOT / "prefabs" / "CubeMapPrefab.cpp", mesh);
 
         outModel = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
     }

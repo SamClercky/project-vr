@@ -18,6 +18,16 @@ namespace components {
             pos = glm::translate(pos, translation);
         }
 
+        void scale(float s) {
+            auto rot = s*glm::mat3{pos};
+            pos = glm::mat4{
+                    glm::vec4{rot[0], pos[0][3]},
+                    glm::vec4{rot[1], pos[1][3]},
+                    glm::vec4{rot[2], pos[2][3]},
+                    pos[3]
+            };
+        }
+
         glm::mat3 get_rotation() {
             return glm::mat3{
                     glm::vec3{pos[0]},

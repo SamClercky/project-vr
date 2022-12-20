@@ -12,10 +12,10 @@ namespace engine {
     public:
         unsigned int ID;
 
-        Shader(std::filesystem::path &&vertex, std::filesystem::path &&fragment);
-        Shader(std::filesystem::path &&vertex,
-               std::filesystem::path &&geometry,
-               std::filesystem::path &&fragment);
+        Shader(const std::filesystem::path &vertex, const std::filesystem::path &fragment);
+        Shader(const std::filesystem::path &vertex,
+               const std::filesystem::path &geometry,
+               const std::filesystem::path &fragment);
         Shader(Shader &&other) = default;
 
         void use() const;

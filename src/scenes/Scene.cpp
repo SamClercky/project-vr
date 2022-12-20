@@ -13,6 +13,7 @@
 #include "prefabs/CubeMapPrefab.h"
 #include "prefabs/SmokePrefab.h"
 #include "prefabs/DirLightPrefab.h"
+#include "prefabs/EnvironmentPrefab.h"
 
 using namespace scenes;
 
@@ -25,6 +26,11 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
             glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
+
+    std::shared_ptr<engine::Model> envModel;
+    std::shared_ptr<engine::Shader> envShader;
+    prefabs::environmentPrefabLoader(envShader, envModel);
+    prefabs::environmentPrefab(m_registry, envShader, envModel);
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
