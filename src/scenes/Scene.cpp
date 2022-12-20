@@ -1,23 +1,41 @@
 #include "Scene.h"
+#include "BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
+#include "BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
+#include "BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h"
 #include "components/DeltaTime.h"
 #include "prefabs/CameraPrefab.h"
+#include "prefabs/CubeMapPrefab.h"
 #include "prefabs/CubePrefab.h"
+#include "prefabs/DirLightPrefab.h"
+#include "prefabs/EnvironmentPrefab.h"
 #include "prefabs/LightCubePrefab.h"
+#include "prefabs/RabbitPrefab.h"
+#include "prefabs/SmokePrefab.h"
 #include "systems/CameraSystem.h"
 #include "systems/DrawSystem.h"
 #include "systems/InputUpdaterSystem.h"
+#include "systems/LightSystem.h"
 #include "systems/RotateSystem.h"
 #include "systems/ViewportUpdateSystem.h"
-#include "systems/LightSystem.h"
-#include "prefabs/RabbitPrefab.h"
-#include "prefabs/CubeMapPrefab.h"
-#include "prefabs/SmokePrefab.h"
-#include "prefabs/DirLightPrefab.h"
-#include "prefabs/EnvironmentPrefab.h"
+#include "systems/bulletSystem.h"
 
 using namespace scenes;
 
+std::unique_ptr<btDiscreteDynamicsWorld> setup_physics() {
+    auto *broadphase = new btDbvtBroadphase();
+    auto *collisionConfiguration = new btDefaultCollisionConfiguration();
+    auto *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+    auto *solver = new btSequentialImpulseConstraintSolver();
+
+    std::unique_ptr world = std::make_unique<btDiscreteDynamicsWorld>(dispatcher, broadphase, solver, collisionConfiguration);
+    world->setGravity(btVector3{0.f, -9.81f, 0.f});
+
+    return world;
+}
+
 Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(entt::registry{}), m_window_ref(window) {
+    m_dynamics_world = setup_physics();
+
     glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 5.0f, -15.0f),
             glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -30,7 +48,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Model> envModel;
     std::shared_ptr<engine::Shader> envShader;
     prefabs::environmentPrefabLoader(envShader, envModel);
-    prefabs::environmentPrefab(m_registry, envShader, envModel);
+    prefabs::environmentPrefab(m_registry, envShader, envModel, m_dynamics_world);
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
@@ -38,7 +56,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::lightCubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
         //prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
-        prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position);
+        prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position, m_dynamics_world);
     }
     //light test
     prefabs::dirLightPrefab(m_registry);
@@ -64,6 +82,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 void Scene::update(uint64_t deltaTime) {
     m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
     systems::update_viewport_system(m_registry, m_window_ref);
+    systems::bulletSystem(m_registry, m_dynamics_world);
     systems::inputUpdaterSystem(m_registry, m_window_ref);
     systems::rotateSystem(m_registry);
 }

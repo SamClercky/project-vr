@@ -5,6 +5,7 @@
 #include "components/Position.h"
 #include "components/Renderable.h"
 #include "components/RotateAnimation.h"
+#include "components/CollisionObject.h"
 #include <entt/entt.hpp>
 
 namespace {
@@ -60,12 +61,14 @@ namespace {
 void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
                               std::shared_ptr<engine::Shader> &shader,
                               entt::registry &registry,
-                              glm::vec3 position) {
+                              glm::vec3 position,
+                              std::unique_ptr<btDiscreteDynamicsWorld> &world) {
     auto entity = registry.create();
     registry.emplace<components::Position>(entity, position);
     registry.emplace<components::Renderable>(
             entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
     registry.emplace<components::RotateAnimation>(entity, 10.f);
+    registry.emplace<components::CollisionObject>(entity, components::collisionobject::cube(world, glm::vec3{1.f}, position, glm::mat3{1.f}, 1.0));
 }
 
 void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
