@@ -12,6 +12,8 @@ static int m_width = 0.f;
 static int m_height = 0.f;
 static bool hasViewportChanged = true;
 
+static bool debugMode = false;
+
 // Debug setup code from exercises
 #ifndef NDEBUG
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
@@ -241,6 +243,14 @@ bool Window::get_viewport(int &width, int &height) {
     return hasChanged;
 }
 
+bool Window::is_debug_mode() {
+#ifndef NDEBUG
+    return debugMode;
+#else
+    return false;
+#endif
+}
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     hasViewportChanged = true;
@@ -251,6 +261,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+        debugMode = !debugMode;
 }
 
 float get_joystick_value(int glfw_joystick, unsigned int axis) {

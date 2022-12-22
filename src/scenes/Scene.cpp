@@ -93,6 +93,8 @@ void Scene::render(engine::Renderer::RenderGuard &renderer) {
     systems::cameraSystem(renderer, m_registry);
     systems::lightSystem(renderer, m_registry);
     systems::drawSystem(renderer, m_registry);
-    systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
+
+    if (engine::Window::is_debug_mode())
+        systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
     //add light system call?
 }

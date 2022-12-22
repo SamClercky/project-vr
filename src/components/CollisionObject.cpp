@@ -12,7 +12,8 @@ btRigidBody* components::collisionobject::cube(
         glm::vec3 position,
         glm::mat3 orientation,
         float mass) {
-    btCollisionShape *shape = new btBoxShape(btVector3(size.x, size.y, size.z));
+    // needs rescaling to match the rest of the engine (probably size measured as from origin)
+    btCollisionShape *shape = new btBoxShape(btVector3(size.x, size.y, size.z) * .5f);
     auto quat = glm::quat_cast(orientation);
     auto *motionState = new btDefaultMotionState(btTransform(
             btQuaternion(quat.x, quat.y, quat.z, quat.w),

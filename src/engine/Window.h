@@ -16,7 +16,7 @@ namespace engine {
             Up,
             Down,
             Right,
-            Left
+            Left,
         };
 
         Window(int width, int height, std::string &&title);
@@ -34,6 +34,7 @@ namespace engine {
         // returns true if it has changed
         bool get_viewport(int &width, int &height);
 
+        [[nodiscard]] static bool is_debug_mode() ;
     private:
         GLFWwindow *m_window;
         glm::vec2 m_mouse_position;

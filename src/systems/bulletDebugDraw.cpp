@@ -102,7 +102,7 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
             engine::GlobalAssetManager.submitMesh(RESOURCES_SRC_ROOT / "systems" / "bulletDebugDraw.cpp", mesh);
         }
         if (!meshCircle) {
-            auto model = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "sphere_smooth.obj", shader);
+            auto model = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "sphere_low_poly.obj", shader);
             meshCircle = model->meshes[0];
         }
 
