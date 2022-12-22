@@ -7,6 +7,7 @@ using namespace engine;
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 float get_joystick_value(int glfw_joystick, unsigned int axis);
+bool get_joystick_button(int glfw_joystick, unsigned int btn);
 
 static int m_width = 0.f;
 static int m_height = 0.f;
@@ -200,6 +201,8 @@ bool Window::is_key_pressed(Window::ButtonDirections key) {
             return glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) > .5f);
         case Window::ButtonDirections::Right:
             return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
+        case Window::ButtonDirections::Shoot:
+            return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS; //|| get_joystick_button(GLFW_JOYSTICK_1, 0);
     }
 }
 
@@ -272,4 +275,13 @@ float get_joystick_value(int glfw_joystick, unsigned int axis) {
     int count;
     const float *inputs = glfwGetJoystickAxes(glfw_joystick, &count);
     return count > axis ? *(inputs + axis) : 0.f;
+}
+
+bool get_joystick_button(int glfw_joystick, unsigned int btn) {
+    if (!glfwJoystickPresent(glfw_joystick))
+        return false;
+
+    int count;
+    const unsigned char *inputs = glfwGetJoystickButtons(glfw_joystick, &count);
+    return count > btn && *(inputs + btn) == GLFW_RELEASE;
 }

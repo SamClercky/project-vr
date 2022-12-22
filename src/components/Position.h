@@ -31,7 +31,7 @@ namespace components {
             };
         }
 
-        glm::mat3 get_rotation() {
+        [[nodiscard]] glm::mat3 get_rotation() const {
             return glm::mat3{
                     glm::vec3{pos[0]},
                     glm::vec3{pos[1]},
@@ -39,7 +39,7 @@ namespace components {
             };
         }
 
-        glm::vec3 get_translation() {
+        [[nodiscard]] glm::vec3 get_translation() const {
             return glm::vec3{pos[3]};
         }
 

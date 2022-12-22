@@ -17,6 +17,7 @@ namespace engine {
             Down,
             Right,
             Left,
+            Shoot,
         };
 
         Window(int width, int height, std::string &&title);

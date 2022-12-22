@@ -89,7 +89,7 @@ set(PROJECT-SRC
         src/systems/RotateSystem.h src/systems/RotateSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
         src/systems/LightSystem.h src/systems/LightSystem.cpp
-        src/prefabs/EnvironmentPrefab.cpp src/prefabs/EnvironmentPrefab.h src/components/CollisionObject.h src/components/CollisionObject.cpp src/systems/bulletSystem.cpp src/systems/bulletSystem.h src/systems/bulletDebugDraw.cpp src/systems/bulletDebugDraw.h)
+        src/prefabs/EnvironmentPrefab.cpp src/prefabs/EnvironmentPrefab.h src/components/CollisionObject.h src/components/CollisionObject.cpp src/systems/bulletSystem.cpp src/systems/bulletSystem.h src/systems/bulletDebugDraw.cpp src/systems/bulletDebugDraw.h src/prefabs/ThrowableBulletPrefab.cpp src/prefabs/ThrowableBulletPrefab.h src/systems/ThrowableBulletShooterSystem.cpp src/systems/ThrowableBulletShooterSystem.h src/systems/DestroyFallOutOfWorldSystem.cpp src/systems/DestroyFallOutOfWorldSystem.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)

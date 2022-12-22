@@ -19,6 +19,8 @@
 #include "systems/ViewportUpdateSystem.h"
 #include "systems/bulletSystem.h"
 #include "systems/bulletDebugDraw.h"
+#include "systems/ThrowableBulletShooterSystem.h"
+#include "systems/DestroyFallOutOfWorldSystem.h"
 
 using namespace scenes;
 
@@ -71,12 +73,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Model> smokeModel;
     std::shared_ptr<engine::Shader> smokeShader;
     prefabs::smokePrefabLoader(smokeModel, smokeShader);
-//    prefabs::smokePrefab(smokeModel, smokeShader, m_registry, glm::vec3{3.f, 3.f, 3.f});
+    prefabs::smokePrefab(smokeModel, smokeShader, m_registry, glm::vec3{3.f, 3.f, 3.f});
 
     std::shared_ptr<engine::Model> cubeMapModel;
     std::shared_ptr<engine::Shader> cubeMapShader;
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
-//    prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
+    prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
     prefabs::cameraPrefab(m_registry);
 }
@@ -84,9 +86,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 void Scene::update(uint64_t deltaTime) {
     m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
     systems::update_viewport_system(m_registry, m_window_ref);
+    systems::throwableBulletSystem(m_registry, m_window_ref, m_dynamics_world);
     systems::bulletSystem(m_registry, m_dynamics_world);
     systems::inputUpdaterSystem(m_registry, m_window_ref);
     systems::rotateSystem(m_registry);
+
+    systems::destroyFallenOutOfWorldSystem(m_registry);
 }
 
 void Scene::render(engine::Renderer::RenderGuard &renderer) {

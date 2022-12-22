@@ -6,6 +6,7 @@
 #include "LinearMath/btDefaultMotionState.h"
 #include <glm/gtx/quaternion.hpp>
 
+
 btRigidBody* components::collisionobject::cube(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,
         glm::vec3 size,
@@ -29,4 +30,7 @@ btRigidBody* components::collisionobject::cube(
     world->addRigidBody(rigidBody);
 
     return rigidBody;
+}
+void components::CollisionObject::applyImpulse(glm::vec3 impulse) const {
+    body->applyCentralImpulse(btVector3{impulse.x, impulse.y, impulse.z});
 }

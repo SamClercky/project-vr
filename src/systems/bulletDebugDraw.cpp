@@ -44,9 +44,9 @@ auto bulletBoundingBox = std::vector{
         engine::Vertex{ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, },
         engine::Vertex{-0.5f, 0.5f, -0.5f, 0.0f, 1.0f}};
 
-std::shared_ptr<engine::Shader> shader;
-std::shared_ptr<engine::Mesh> mesh;
-std::shared_ptr<engine::Mesh> meshCircle;
+static std::shared_ptr<engine::Shader> shader;
+static std::shared_ptr<engine::Mesh> mesh;
+static std::shared_ptr<engine::Mesh> meshCircle;
 
 void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::RenderGuard &guard, std::unique_ptr<btDiscreteDynamicsWorld> &world) {
     auto &dt = registry.ctx().get<components::DeltaTime>();

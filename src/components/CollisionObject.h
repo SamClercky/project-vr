@@ -16,6 +16,8 @@ namespace components {
 
         CollisionObject(btRigidBody *body, glm::vec3 size): body(body), size(size), offset(glm::vec3{0.f}) {}
         CollisionObject(btRigidBody *body, glm::vec3 size, glm::vec3 offset): body(body), size(size), offset(offset) {}
+
+        void applyImpulse(glm::vec3 impulse) const;
     };
 
     namespace collisionobject {
