@@ -29,6 +29,7 @@ void systems::bulletSystem(entt::registry &registry, std::unique_ptr<btDiscreteD
                 transform.getOrigin().getY(),
                 transform.getOrigin().getZ()};
 
-        position.pos = glm::translate(orientation, pos);
+        position.set_rotation(orientation);
+        position.set_translation(pos);
     }
 }

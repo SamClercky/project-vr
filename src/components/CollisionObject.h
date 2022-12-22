@@ -6,12 +6,16 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 #include <memory>
+#include <glm/glm.hpp>
 
 namespace components {
     struct CollisionObject {
         btRigidBody *body;
+        glm::vec3 offset;
+        glm::vec3 size;
 
-        CollisionObject(btRigidBody *body): body(body) {}
+        CollisionObject(btRigidBody *body, glm::vec3 size): body(body), size(size), offset(glm::vec3{0.f}) {}
+        CollisionObject(btRigidBody *body, glm::vec3 size, glm::vec3 offset): body(body), size(size), offset(offset) {}
     };
 
     namespace collisionobject {
