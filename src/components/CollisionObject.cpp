@@ -6,6 +6,18 @@
 #include "LinearMath/btDefaultMotionState.h"
 #include <glm/gtx/quaternion.hpp>
 
+btRigidBody* components::collisionobject::cubeKinematic(
+        std::unique_ptr<btDiscreteDynamicsWorld> &world,
+        glm::vec3 size,
+        glm::vec3 position,
+        glm::mat3 orientation,
+        float mass) {
+        auto body = cube(world, size, position, orientation, mass);
+        body->setCollisionFlags(body->getFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        body->setActivationState(DISABLE_DEACTIVATION);
+
+        return body;
+}
 
 btRigidBody* components::collisionobject::cube(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,

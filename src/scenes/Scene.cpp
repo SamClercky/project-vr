@@ -21,6 +21,8 @@
 #include "systems/bulletDebugDraw.h"
 #include "systems/ThrowableBulletShooterSystem.h"
 #include "systems/DestroyFallOutOfWorldSystem.h"
+#include "prefabs/PlayerPrefab.h"
+#include "components/GameStateGlobals.h"
 
 using namespace scenes;
 
@@ -47,6 +49,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
             glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
+    m_registry.ctx().emplace<components::GameStateGlobals>();
 
     std::shared_ptr<engine::Model> envModel;
     std::shared_ptr<engine::Shader> envShader;
@@ -80,6 +83,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
+    prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);
 }
 

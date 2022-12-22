@@ -2,6 +2,9 @@
 #include "components/Camera.h"
 #include "components/DeltaTime.h"
 #include "components/Position.h"
+#include "components/GameStateGlobals.h"
+#include "components/FollowedByCamera.h"
+#include "components/CollisionObject.h"
 
 void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &window) {
     glm::vec3 delta_pos{0.f};
@@ -22,14 +25,43 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
 
     auto &cam = registry.ctx().get<components::Camera>();
     auto &dt = registry.ctx().get<components::DeltaTime>();
+    auto &gameState = registry.ctx().get<components::GameStateGlobals>();
 
+    // cam coords
     auto z = cam.get_look_direction();
     auto x = glm::normalize(glm::cross(cam.get_look_direction(), cam.worldUp));
     auto y = glm::cross(z, x);
-    glm::mat3 toCamDirectionTrans{x, y, z};
 
-    auto rotated_delta_pos = toCamDirectionTrans * delta_pos;
-    cam.position += 10.f * rotated_delta_pos * dt.sec();
+    glm::mat3 toCamDirectionTrans{x, y, z};
+    auto rotated_delta_pos = toCamDirectionTrans * delta_pos; // intended direction from player
+
+    if (window.is_key_pressed(engine::Window::ButtonDirections::Fly)) {
+        gameState.isFreeCam = !gameState.isFreeCam;
+    }
+    if (gameState.isFreeCam) {
+        cam.position += 10.f * rotated_delta_pos * dt.sec();
+    } else {
+        auto playerView = registry.view<components::FollowedByCamera,
+                                        components::Position,
+                                        components::CollisionObject>();
+        for (const auto &player: playerView) {
+            auto &cObject = playerView.get<components::CollisionObject>(player);
+            auto &position = playerView.get<components::Position>(player);
+//            cObject.applyImpulse(rotated_delta_pos * .1f);
+
+            glm::vec3 direction;
+            if (glm::length(rotated_delta_pos) > 0.f) {
+//                direction = glm::normalize(rotated_delta_pos);
+//                cObject.applyImpulse(glm::vec3{direction.x, 0.f, direction.z});
+                cObject.body->translate(10.f * dt.sec() * btVector3{rotated_delta_pos.x, rotated_delta_pos.y, rotated_delta_pos.z});
+            } else {
+                direction = glm::vec3{0.f};
+            }
+//            cObject.body->setPushVelocity(btVector3{direction.x, direction.y, direction.z});
+
+            cam.position = position.get_translation();
+        }
+    }
 
     float speed{30.f};// degrees per second
     cam.yaw += speed * mouse_position.x * dt.sec();

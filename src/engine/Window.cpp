@@ -203,6 +203,8 @@ bool Window::is_key_pressed(Window::ButtonDirections key) {
             return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
         case Window::ButtonDirections::Shoot:
             return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 4);
+        case Window::ButtonDirections::Fly:
+            return glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS;
     }
 }
 

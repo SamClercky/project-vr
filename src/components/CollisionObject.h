@@ -29,6 +29,13 @@ namespace components {
                 glm::vec3 position,
                 glm::mat3 orientation,
                 float mass);
+
+        btRigidBody* cubeKinematic(
+                std::unique_ptr<btDiscreteDynamicsWorld> &world,
+                glm::vec3 size,
+                glm::vec3 position,
+                glm::mat3 orientation,
+                float mass);
     }
 }
 
