@@ -149,6 +149,10 @@ Window::Window(int width, int height, std::string &&title) {
     // enable Z-buffer
     glEnable(GL_DEPTH_TEST);
 
+    // enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // default blending mode
+
     // set input settings
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
