@@ -5,7 +5,21 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+static bool needsInit = true;
+
+void cleanCollisionObject(entt::registry &registry, entt::entity entity) {
+    const auto &cObject = registry.get<components::CollisionObject>(entity);
+    cObject.world->removeRigidBody(cObject.body);
+}
+
 void systems::bulletSystem(entt::registry &registry, std::unique_ptr<btDiscreteDynamicsWorld> &dynamicWorld) {
+    if (needsInit) {
+        needsInit = false;
+
+        registry.on_destroy<components::CollisionObject>()
+                .connect<&cleanCollisionObject>();
+    }
+
     auto &dt = registry.ctx().get<components::DeltaTime>();
     dynamicWorld->stepSimulation(dt.sec());
 

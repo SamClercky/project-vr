@@ -15,7 +15,7 @@ void systems::throwableBulletSystem(entt::registry &registry, engine::Window &wi
 
         if (!model || !shader)
             prefabs::loadThrowableBulletPrefab(model, shader);
-        auto impulse = camera.get_look_direction();
+        auto impulse = camera.get_look_direction() * 10.f;
         prefabs::throwableBulletPrefab(registry, world, model, shader, camera.position, impulse);
     }
 }

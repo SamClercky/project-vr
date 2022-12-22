@@ -4,6 +4,7 @@
 #include "components/Position.h"
 #include "components/CollisionObject.h"
 
+#include "components/ShortLivedObject.h"
 #include "engine/AssetManager.h"
 
 void prefabs::loadThrowableBulletPrefab(std::shared_ptr<engine::Model> &outModel, std::shared_ptr<engine::Shader> &outShader) {
@@ -24,13 +25,14 @@ void prefabs::throwableBulletPrefab(entt::registry &registry,
                                     glm::vec3 impulse) {
     const auto entity = registry.create();
     registry.emplace<components::Position>(entity, position, .1f);
-    glm::vec3 size{0.5f};
+    glm::vec3 size{0.2f};
     const auto &cObject = registry.emplace<components::CollisionObject>(entity, components::collisionobject::cube(
                                                                   world,
                                                                   size,
                                                                   position,
                                                                   glm::mat3{1.f},
-                                                                  0.01f), size);
+                                                                  0.2f), world.get(), size);
     cObject.applyImpulse(impulse);
     registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, shader);
+    registry.emplace<components::ShortLivedObject>(entity, 10.f);
 }

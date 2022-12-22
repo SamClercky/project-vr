@@ -202,7 +202,7 @@ bool Window::is_key_pressed(Window::ButtonDirections key) {
         case Window::ButtonDirections::Right:
             return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
         case Window::ButtonDirections::Shoot:
-            return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS; //|| get_joystick_button(GLFW_JOYSTICK_1, 0);
+            return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 4);
     }
 }
 
@@ -283,5 +283,5 @@ bool get_joystick_button(int glfw_joystick, unsigned int btn) {
 
     int count;
     const unsigned char *inputs = glfwGetJoystickButtons(glfw_joystick, &count);
-    return count > btn && *(inputs + btn) == GLFW_RELEASE;
+    return count > btn && *(inputs + btn) == GLFW_PRESS;
 }
