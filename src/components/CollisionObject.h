@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 #include <memory>
-#include <glm/glm.hpp>
+#include <vector>
 
 namespace components {
     struct CollisionObject {
@@ -23,6 +23,11 @@ namespace components {
     };
 
     namespace collisionobject {
+        struct CubeShape {
+            glm::vec3 size;
+            glm::vec3 position;
+            glm::mat3 orientation;
+        };
         btRigidBody* cube(
                 std::unique_ptr<btDiscreteDynamicsWorld> &world,
                 glm::vec3 size,
@@ -36,6 +41,12 @@ namespace components {
                 glm::vec3 position,
                 glm::mat3 orientation,
                 float mass);
+
+        btRigidBody *cubeCompound(
+                std::unique_ptr<btDiscreteDynamicsWorld> &world,
+                glm::vec3 position,
+                glm::mat3 orientation,
+                float mass, std::vector<CubeShape> cubes);
     }
 }
 

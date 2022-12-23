@@ -47,17 +47,10 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
         for (const auto &player: playerView) {
             auto &cObject = playerView.get<components::CollisionObject>(player);
             auto &position = playerView.get<components::Position>(player);
-//            cObject.applyImpulse(rotated_delta_pos * .1f);
 
-            glm::vec3 direction;
             if (glm::length(rotated_delta_pos) > 0.f) {
-//                direction = glm::normalize(rotated_delta_pos);
-//                cObject.applyImpulse(glm::vec3{direction.x, 0.f, direction.z});
                 cObject.body->translate(10.f * dt.sec() * btVector3{rotated_delta_pos.x, rotated_delta_pos.y, rotated_delta_pos.z});
-            } else {
-                direction = glm::vec3{0.f};
             }
-//            cObject.body->setPushVelocity(btVector3{direction.x, direction.y, direction.z});
 
             cam.position = position.get_translation();
         }
