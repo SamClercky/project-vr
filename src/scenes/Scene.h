@@ -14,7 +14,7 @@ namespace scenes {
         explicit Scene(engine::Window &window, engine::Renderer &renderer);
         ~Scene() = default;
 
-        void update(uint64_t deltaTime);
+        void update(uint64_t deltaTime, uint32_t viewWidth, uint32_t viewHeight);
         void render(engine::Renderer::RenderGuard &renderer);
 
     private:

@@ -58,10 +58,10 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
-    //prefabs::cubePrefabLoader(cubeModel, cubeShader);
+//    prefabs::cubePrefabLoader(cubeModel, cubeShader);
     prefabs::lightCubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
-        //prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
+//        prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
         prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position, m_dynamics_world);
     }
 
@@ -87,8 +87,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cameraPrefab(m_registry);
 }
 
-void Scene::update(uint64_t deltaTime) {
+void Scene::update(uint64_t deltaTime, uint32_t width, uint32_t height) {
     m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
+    auto &state = m_registry.ctx().get<components::GameStateGlobals>();
+    state.viewWidth = width;
+    state.viewHeight = height;
+
     systems::update_viewport_system(m_registry, m_window_ref);
     systems::throwableBulletSystem(m_registry, m_window_ref, m_dynamics_world);
     systems::bulletSystem(m_registry, m_dynamics_world);

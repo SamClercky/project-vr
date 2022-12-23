@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec3 vPosition;
 in vec2 vTexCoord;
 in vec3 vNormal;
+in vec4 lPosition;
 
 uniform vec3 lightColor = vec3(1.0f);
 uniform sampler2D ourTexture;
@@ -31,8 +32,18 @@ uniform vec3 viewPos;
 //uniform Material material;
 uniform Light lights[];
 uniform int numLights;
+uniform sampler2D shadowMap;
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
+
+float shadowCalculation(vec4 lPosition) {
+    vec3 shadowCoords = lPosition.xyz / lPosition.w; // maintain compotibility with other perspectives
+    shadowCoords = shadowCoords * .5f + .5f; // between [0,1]
+    float closestDepth = texture(shadowMap, shadowCoords.xy).r;
+    float depth = shadowCoords.z;
+    float shadowBias = .005f;
+    return depth - shadowBias < closestDepth ? 1.f : 0.f;
+}
 
 void main() {
 	vec3 norm = normalize(vNormal);
@@ -45,7 +56,9 @@ void main() {
         result += CalcDirLight(l, norm, viewDir);
     }
 
-	FragColor = texture(ourTexture, vTexCoord) * vec4(result, 1.0);
+//	FragColor = texture(ourTexture, vTexCoord) * vec4(result, 1.0);
+    float grayScale = shadowCalculation(lPosition);
+    FragColor = vec4(vec3(grayScale), 1.f);
 }
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)

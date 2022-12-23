@@ -57,7 +57,7 @@ namespace engine {
 
         RenderGuard startRender();
 
-        void render();
+        void render(uint32_t viewWidth, uint32_t viewHeight);
 
     private:
         static bool isGuardActive;

@@ -8,6 +8,7 @@ namespace prefabs {
 
 	void dirLightPrefab(entt::registry &registry,
                         glm::vec3 direction,
+                        glm::vec3 position, // needed for shadows
                         glm::vec3 ambient,
                         glm::vec3 diffuse,
                         glm::vec3 specular);

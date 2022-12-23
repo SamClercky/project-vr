@@ -174,7 +174,7 @@ Window::~Window() {
 void Window::set_title(std::string &&title) {
     glfwSetWindowTitle(m_window, title.c_str());
 }
-void Window::loop(const std::function<void(const uint64_t)> &callback) {
+void Window::loop(const std::function<void(const uint64_t, const uint32_t, const uint32_t)> &callback) {
     auto prevTime = (uint64_t) (glfwGetTime() * 1000.0);
 
     // vsync
@@ -188,7 +188,7 @@ void Window::loop(const std::function<void(const uint64_t)> &callback) {
         processInput(m_window);
 
         // draw OpenGL
-        callback(delta);
+        callback(delta, m_width, m_height);
 
         // commit by swapping buffer
         glfwSwapBuffers(m_window);
@@ -208,7 +208,7 @@ bool Window::is_key_pressed(Window::ButtonDirections key) {
         case Window::ButtonDirections::Shoot:
             return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 4);
         case Window::ButtonDirections::Fly:
-            return glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS;
+            return glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 0);
     }
 }
 
@@ -270,7 +270,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 1))
         debugMode = !debugMode;
 }
 

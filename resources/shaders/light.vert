@@ -13,10 +13,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform mat4 lightSpaceMatrix;
+out vec4 lPosition;
 
 void main() {
 	gl_Position = projection * view * model * vec4(position, 1.0);
 	vPosition = position;
 	vNormal = transpose(inverse(mat3(model))) * normal;
 	vTexCoord = texCoord;
+	lPosition = lightSpaceMatrix * vec4(vPosition, 1.f);
 }
