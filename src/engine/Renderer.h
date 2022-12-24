@@ -29,6 +29,9 @@ namespace engine {
         float constant;
         float linear;
         float quadratic;
+
+        float cutOff;
+        float outerCutOff;
     };
 
     struct Frame {
@@ -36,6 +39,7 @@ namespace engine {
         glm::mat4 perspective;
         std::vector<RenderObject> objects;
         std::vector<LightObject> lights;
+        glm::vec3 viewPos;
     };
 
     class Renderer {
@@ -47,6 +51,7 @@ namespace engine {
             void submit(RenderAssetRef obj, glm::mat4 modelView);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
             void submit_light(LightObject li);
+            void submit_viewPos(glm::vec3 position);
 
         private:
             Frame &renderBin;

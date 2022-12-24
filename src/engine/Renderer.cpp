@@ -19,6 +19,7 @@ void Renderer::render() {
         nextFrame.objects.clear();
         currFrame.perspective = nextFrame.perspective;
         currFrame.view = nextFrame.view;
+        currFrame.viewPos = nextFrame.viewPos;
         std::swap(currFrame.lights, nextFrame.lights);
         nextFrame.lights.clear();
     }
@@ -33,14 +34,14 @@ void Renderer::render() {
 
     for (const auto &obj: currFrame.objects) {
         auto meshGuard = obj.asset.mesh->bind();
-
+        
         const auto &shader = obj.asset.shader;
         shader->use();
         shader->setMat4f("model", obj.modelView);
         shader->setMat4f("view", currFrame.view);
         shader->setMat4f("projection", currFrame.perspective);
         shader->setFloat("time", static_cast<float>(glfwGetTime()));
-
+        shader->setVec3f("viewPos", currFrame.viewPos);
         for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
             const auto &light = currFrame.lights[i];
             shader->setVec3f(std::format("lights[{0}].position", i), light.position);
@@ -53,6 +54,9 @@ void Renderer::render() {
             shader->setFloat(std::format("lights[{0}].constant", i), light.constant);
             shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
             shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
+
+            shader->setFloat(std::format("lights[{0}].cutOff", i), light.cutOff);
+            shader->setFloat(std::format("lights[{0}].outerCutOff", i), light.outerCutOff);
         }
         shader->setInt("numLights", currFrame.lights.size());
 
@@ -81,4 +85,8 @@ void Renderer::RenderGuard::submit_camera(glm::mat4 perspective,
                                           glm::mat4 view) {
     renderBin.view = view;
     renderBin.perspective = perspective;
+}
+
+void Renderer::RenderGuard::submit_viewPos(glm::vec3 position) {
+    renderBin.viewPos = position;
 }

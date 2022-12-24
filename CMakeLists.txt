@@ -15,7 +15,7 @@ option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(3rdparty/glfw)
 if (MSVC)
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:mainCRTStartup /SUBSYSTEM:WINDOWS")
 endif ()
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT opengl_test2)
 
@@ -79,10 +79,11 @@ set(PROJECT-SRC
         src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h
         src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
         src/prefabs/LightCubePrefab.h src/prefabs/LightCubePrefab.cpp
-        src/prefabs/DirLightPrefab.h src/prefabs/DirLightPrefab.cpp
+        src/prefabs/SpotLightPrefab.h src/prefabs/SpotLightPrefab.cpp
+        src/prefabs/PointLightPrefab.h src/prefabs/PointLightPrefab.cpp
 
         src/scenes/Scene.h src/scenes/Scene.cpp
-
+        
         src/systems/CameraSystem.h src/systems/CameraSystem.cpp
         src/systems/DrawSystem.h src/systems/DrawSystem.cpp
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp

@@ -17,7 +17,7 @@ void prefabs::rabbitPrefab(std::shared_ptr<engine::Model> &asset,
 void prefabs::rabbitPrefabLoader(std::shared_ptr<engine::Model> &outModel,
                                  std::shared_ptr<engine::Shader> &outShader) {
 
-    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "rabbit.vert",
-                                                        RESOURCES_ROOT / "shaders" / "rabbit.frag");
+    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "light.vert",
+                                                        RESOURCES_ROOT / "shaders" / "light.frag");
     outModel = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "bunny_small.obj", outShader);
 }

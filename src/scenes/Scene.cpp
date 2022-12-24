@@ -6,7 +6,8 @@
 #include "prefabs/CameraPrefab.h"
 #include "prefabs/CubeMapPrefab.h"
 #include "prefabs/CubePrefab.h"
-#include "prefabs/DirLightPrefab.h"
+#include "prefabs/SpotLightPrefab.h"
+#include "prefabs/PointLightPrefab.h"
 #include "prefabs/EnvironmentPrefab.h"
 #include "prefabs/LightCubePrefab.h"
 #include "prefabs/RabbitPrefab.h"
@@ -66,12 +67,13 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     }
 
     //light test
-    prefabs::dirLightPrefab(m_registry);
+    prefabs::pointLightPrefab(m_registry);
+    prefabs::spotLightPrefab(m_registry);
 
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
     prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
-//    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
+    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
 
     std::shared_ptr<engine::Model> smokeModel;
     std::shared_ptr<engine::Shader> smokeShader;
