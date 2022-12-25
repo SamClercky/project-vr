@@ -65,7 +65,8 @@ namespace engine {
         static bool isGuardActive;
         Frame currFrame;
         Frame nextFrame;
-        GLuint depthTexture = -1;
+        std::vector<GLint> depthTextures{};
+        std::vector<glm::mat4> lightTransforms{};
     };
 
 }// namespace engine

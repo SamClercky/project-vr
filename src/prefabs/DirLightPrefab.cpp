@@ -4,7 +4,7 @@
 
 namespace prefabs {
 
-    glm::vec3 direction = glm::normalize(glm::vec3(-1.f, -2.0f, -1.f));
+    glm::vec3 direction = glm::normalize(glm::vec3(-1.f, -1.0f, 0.f));
     glm::vec3 position = -direction*5.f; // needed for shadows
     glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
     glm::vec3 diffuse = glm::vec3(0.4f, 0.4f, 0.4f);

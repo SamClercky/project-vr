@@ -9,20 +9,18 @@
 
 using namespace engine;
 
-void renderShadowsMaps(LightObject light, Frame &frame);
+void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm::mat4 &lightSpaceMatrix);
 
 bool Renderer::isGuardActive = false;
 static std::shared_ptr<Shader> depthShader;
 
-Renderer::Renderer() : currFrame(), nextFrame() {
-    glGenTextures(1, &depthTexture);
-}
+Renderer::Renderer() : currFrame(), nextFrame() {}
 
 Renderer::RenderGuard Renderer::startRender() {
     return Renderer::RenderGuard(nextFrame);
 }
 
-void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, glm::mat4 &lightSpaceMatrix) {
+void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm::mat4 &lightSpaceMatrix) {
     const uint32_t LIGHT_WIDTH = 1024; // Should probably be parametrised in light?
     const uint32_t LIGHT_HEIGHT = 1024;
 
@@ -36,6 +34,8 @@ void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    float borderFullyLit[] = {1.f, 1.f, 1.f, 1.f};
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderFullyLit); // set border to fully lit
 
     glBindFramebuffer(GL_FRAMEBUFFER, depthFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
@@ -48,7 +48,7 @@ void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, 
 
     float near_plane = 1.0f, far_plane = 30.f;
     auto perspective = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-//    auto perspective = glm::perspective(glm::radians(45.0f), 1.f, near_plane, far_plane);
+//    auto perspective = glm::perspective(glm::radians(90.0f), 1.f, near_plane, far_plane);
     auto view = glm::lookAt(light.position,
                                   light.position + light.direction,
                                   glm::vec3( 0.0f, 1.0f,  0.0f));
@@ -88,9 +88,27 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
     // current frame only contains new data if nextFrame was ready, otherwise
     // rerender previous frame
 
-    glm::mat4 lightSpaceMatrix;
     glCullFace(GL_FRONT);
-    renderShadowsMaps(currFrame.lights[0], currFrame, depthTexture, lightSpaceMatrix);
+
+    // enlarge light containers if needed
+    if (currFrame.lights.size() > depthTextures.size()) {
+        auto amount = currFrame.lights.size() - depthTextures.size();
+        std::vector<GLuint> textures(amount, 0);
+        glGenTextures((int)amount, textures.data());
+        depthTextures.insert(depthTextures.end(), textures.begin(), textures.end());
+    }
+    if (currFrame.lights.size() > lightTransforms.size()) {
+        auto amount = currFrame.lights.size() - lightTransforms.size();
+        std::vector<glm::mat4> temp{amount, glm::mat4{1.f}};
+        lightTransforms.insert(lightTransforms.end(), temp.begin(), temp.end());
+    }
+
+    for (int i = 0; i < currFrame.lights.size(); i++) {
+        auto &light = currFrame.lights[i];
+        auto &depthTexture = depthTextures[i];
+        auto &lightTransform = lightTransforms[i];
+        renderShadowsMaps(light, currFrame, depthTexture, lightTransform);
+    }
 
     glCullFace(GL_BACK);
     glViewport(0, 0, (GLint)viewWidth, (GLint)viewHeight);
@@ -108,7 +126,6 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         shader->setMat4f("view", currFrame.view);
         shader->setMat4f("projection", currFrame.perspective);
         shader->setFloat("time", static_cast<float>(glfwGetTime()));
-        shader->setMat4f("lightSpaceMatrix", lightSpaceMatrix);
 
         for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
             const auto &light = currFrame.lights[i];
@@ -122,6 +139,8 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
             shader->setFloat(std::format("lights[{0}].constant", i), light.constant);
             shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
             shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
+
+            shader->setMat4f(std::format("lights[{0}].lightTransform", i), lightTransforms[i]);
         }
         shader->setInt("numLights", (int)currFrame.lights.size());
 
@@ -132,10 +151,12 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         }
 
         // bind shadows
-        const int shadowLocation = (int)meshGuard.textures.size();
-        glActiveTexture(GL_TEXTURE0 + shadowLocation);
-        glBindTexture(GL_TEXTURE_2D, depthTexture);
-        shader->setInt("shadowMap", shadowLocation);
+        for (int i = 0; i < currFrame.lights.size(); i++) {
+            const int shadowLocation = (int)meshGuard.textures.size() + i;
+            glActiveTexture(GL_TEXTURE0 + shadowLocation);
+            glBindTexture(GL_TEXTURE_2D, depthTextures[i]);
+            shader->setInt(std::format("lights[{0}].shadowMap", i), shadowLocation);
+        }
 
         meshGuard.draw();
     }
