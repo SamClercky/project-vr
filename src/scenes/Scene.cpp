@@ -23,6 +23,7 @@
 #include "systems/DestroyFallOutOfWorldSystem.h"
 #include "prefabs/PlayerPrefab.h"
 #include "components/GameStateGlobals.h"
+#include "prefabs/LightScreenPrefab.h"
 
 using namespace scenes;
 
@@ -82,6 +83,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Shader> cubeMapShader;
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
+
+    prefabs::screenPrefab(m_registry, glm::vec3{0.f, 2.f/3.f, -9.3f}, glm::mat3{
+                                                                          3.f, 0.f, 0.f,
+                                                                          0.f, 3.f, 0.f,
+                                                                          0.f, 0.f, 1.f
+                                                                  });
 
     prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);

@@ -2,7 +2,7 @@
 
 out vec4 gl_Position;
 
-in vec3 position;
+layout (location = 0) in vec3 position;
 out vec3 vPosition;
 
 in vec2 texCoord;

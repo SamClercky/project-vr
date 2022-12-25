@@ -10,12 +10,20 @@ namespace components {
     struct Renderable {
         std::vector<std::shared_ptr<engine::Model>> parts;
         std::shared_ptr<engine::Shader> shaderRef;
+        bool hasShadow;
 
         explicit Renderable(std::vector<std::shared_ptr<engine::Model>> &&parts,
-                            std::shared_ptr<engine::Shader> &shader) : parts(parts),
-                                                                       shaderRef(shader) {}
+                            std::shared_ptr<engine::Shader> &shader)
+                : parts(parts), shaderRef(shader), hasShadow(true) {}
+
+        explicit Renderable(std::vector<std::shared_ptr<engine::Model>> &&parts,
+                            std::shared_ptr<engine::Shader> &shader, bool hasShadow)
+            : parts(parts), shaderRef(shader), hasShadow(hasShadow) {}
+
+        explicit Renderable(std::shared_ptr<engine::Model> &&part, bool hasShadow)
+            : parts(std::vector<std::shared_ptr<engine::Model>>{part}), hasShadow(hasShadow) {}
         explicit Renderable(std::shared_ptr<engine::Model> &&part)
-            : parts(std::vector<std::shared_ptr<engine::Model>>{part}) {}
+                : parts(std::vector<std::shared_ptr<engine::Model>>{part}), hasShadow(true) {}
     };
 
 }// namespace components

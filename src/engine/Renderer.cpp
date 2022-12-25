@@ -14,7 +14,9 @@ void renderShadowsMaps(LightObject light, Frame &frame);
 bool Renderer::isGuardActive = false;
 static std::shared_ptr<Shader> depthShader;
 
-Renderer::Renderer() : currFrame(), nextFrame() {}
+Renderer::Renderer() : currFrame(), nextFrame() {
+    glGenTextures(1, &depthTexture);
+}
 
 Renderer::RenderGuard Renderer::startRender() {
     return Renderer::RenderGuard(nextFrame);
@@ -27,7 +29,6 @@ void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, 
     uint32_t depthFBO;
     glGenFramebuffers(1, &depthFBO);
 
-    glGenTextures(1, &depthTexture);
     glBindTexture(GL_TEXTURE_2D, depthTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, LIGHT_WIDTH, LIGHT_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
@@ -45,9 +46,9 @@ void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, 
     glViewport(0, 0, LIGHT_WIDTH, LIGHT_HEIGHT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    float near_plane = 1.0f, far_plane = 7.5f;
-//    auto perspective = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-    auto perspective = glm::perspective(glm::radians(45.0f), 1.f, near_plane, far_plane);
+    float near_plane = 1.0f, far_plane = 30.f;
+    auto perspective = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+//    auto perspective = glm::perspective(glm::radians(45.0f), 1.f, near_plane, far_plane);
     auto view = glm::lookAt(light.position,
                                   light.position + light.direction,
                                   glm::vec3( 0.0f, 1.0f,  0.0f));
@@ -62,6 +63,8 @@ void renderShadowsMaps(LightObject light, Frame &frame, uint32_t &depthTexture, 
     depthShader->setMat4f("projection", perspective);
 
     for (const auto &obj: frame.objects) {
+        if (!obj.hasShadow)
+            continue ; // skip all objects without shadow
         auto meshGuard = obj.asset.mesh->bind();
         depthShader->setMat4f("model", obj.modelView);
         meshGuard.draw();
@@ -85,13 +88,12 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
     // current frame only contains new data if nextFrame was ready, otherwise
     // rerender previous frame
 
-    uint32_t shadowMap;
     glm::mat4 lightSpaceMatrix;
     glCullFace(GL_FRONT);
-    renderShadowsMaps(currFrame.lights[0], currFrame, shadowMap, lightSpaceMatrix);
+    renderShadowsMaps(currFrame.lights[0], currFrame, depthTexture, lightSpaceMatrix);
 
     glCullFace(GL_BACK);
-    glViewport(0, 0, viewWidth, viewHeight);
+    glViewport(0, 0, (GLint)viewWidth, (GLint)viewHeight);
     glClearColor(.2f, .3f, .3f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -121,15 +123,22 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
             shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
             shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
         }
-        shader->setInt("numLights", currFrame.lights.size());
+        shader->setInt("numLights", (int)currFrame.lights.size());
 
-        glActiveTexture(GL_TEXTURE0 + meshGuard.textures.size());
-        glBindTexture(GL_TEXTURE_2D, shadowMap);
+        // bind textures
+        BoundedTexture2DGuard guards[16];
+        for (uint32_t i = 0; i < meshGuard.textures.size() && i < 16; i++) {
+            guards[i] = meshGuard.textures[i]->bind(i);
+        }
+
+        // bind shadows
+        const int shadowLocation = (int)meshGuard.textures.size();
+        glActiveTexture(GL_TEXTURE0 + shadowLocation);
+        glBindTexture(GL_TEXTURE_2D, depthTexture);
+        shader->setInt("shadowMap", shadowLocation);
 
         meshGuard.draw();
     }
-
-    glDeleteTextures(1, &shadowMap);
 }
 
 Renderer::RenderGuard::RenderGuard(Frame &renderBin) : renderBin(renderBin) {
@@ -137,10 +146,12 @@ Renderer::RenderGuard::RenderGuard(Frame &renderBin) : renderBin(renderBin) {
 }
 Renderer::RenderGuard::~RenderGuard() { isGuardActive = false; }
 
-void Renderer::RenderGuard::submit(RenderAssetRef obj, glm::mat4 modelView) {
+void Renderer::RenderGuard::submit(RenderAssetRef &&obj, glm::mat4 modelView) { submit(std::move(obj), modelView, true); }
+void Renderer::RenderGuard::submit(RenderAssetRef &&obj, glm::mat4 modelView, bool hasShadow) {
     renderBin.objects.push_back({
             .modelView = modelView,
             .asset = std::move(obj),
+            .hasShadow = hasShadow,
     });
 }
 

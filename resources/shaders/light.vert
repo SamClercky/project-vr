@@ -2,7 +2,7 @@
 
 out vec4 gl_Position;
 
-in vec3 position;
+layout (location = 0) in vec3 position;
 out vec3 vPosition;
 in vec3 normal;
 out vec3 vNormal;
@@ -21,5 +21,5 @@ void main() {
 	vPosition = position;
 	vNormal = transpose(inverse(mat3(model))) * normal;
 	vTexCoord = texCoord;
-	lPosition = lightSpaceMatrix * vec4(vPosition, 1.f);
+	lPosition = lightSpaceMatrix * model * vec4(position, 1.f);
 }

@@ -1,5 +1,5 @@
 #version 330 core
 
 void main() {
-   // empty shader
+//   FragColor = vec4(vPosition.xyz, 1.0);
 }

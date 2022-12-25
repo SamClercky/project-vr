@@ -109,10 +109,10 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
         guard.submit(engine::RenderAssetRef {
                 .mesh = mesh,
                 .shader = shader,
-        }, glm::transpose(modelView));
+        }, glm::transpose(modelView), false);
         guard.submit(engine::RenderAssetRef {
                 .mesh = meshCircle,
                 .shader = shader,
-        }, glm::transpose(circleBoundingBoxView));
+        }, glm::transpose(circleBoundingBoxView), false);
     }
 }

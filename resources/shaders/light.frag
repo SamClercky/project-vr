@@ -6,14 +6,11 @@ in vec2 vTexCoord;
 in vec3 vNormal;
 in vec4 lPosition;
 
-uniform vec3 lightColor = vec3(1.0f);
-uniform sampler2D ourTexture;
-
-struct Material {
-	sampler2D diffuseMap;
-	sampler2D specularMap;
-	float shininess;
-};
+//struct Material {
+//	sampler2D diffuseMap;
+//	sampler2D specularMap;
+//	float shininess;
+//};
 
 struct Light {
 	vec3 position;
@@ -28,6 +25,9 @@ struct Light {
     float quadratic;
 };
 
+uniform vec3 lightColor = vec3(1.0f);
+uniform sampler2D ourTexture;
+
 uniform vec3 viewPos;
 //uniform Material material;
 uniform Light lights[];
@@ -35,11 +35,12 @@ uniform int numLights;
 uniform sampler2D shadowMap;
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
+float shadowCalculation(vec4 lPosition);
 
 float shadowCalculation(vec4 lPosition) {
     vec3 shadowCoords = lPosition.xyz / lPosition.w; // maintain compotibility with other perspectives
     shadowCoords = shadowCoords * .5f + .5f; // between [0,1]
-    float closestDepth = texture(shadowMap, shadowCoords.xy).r;
+    float closestDepth = texture(shadowMap, shadowCoords.xy).x;
     float depth = shadowCoords.z;
     float shadowBias = .005f;
     return depth - shadowBias < closestDepth ? 1.f : 0.f;
@@ -56,9 +57,7 @@ void main() {
         result += CalcDirLight(l, norm, viewDir);
     }
 
-//	FragColor = texture(ourTexture, vTexCoord) * vec4(result, 1.0);
-    float grayScale = shadowCalculation(lPosition);
-    FragColor = vec4(vec3(grayScale), 1.f);
+	FragColor = texture(ourTexture, vTexCoord) * vec4(result, 1.0);
 }
 
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
@@ -73,5 +72,6 @@ vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir)
     vec3 ambient = light.ambient; //* vec3(texture(material.diffuseMap, vTexCoord));
     vec3 diffuse = light.diffuse * diff; //* vec3(texture(material.diffuseMap, vTexCoord));
     vec3 specular = light.specular * spec; //* vec3(texture(material.specularMap, vTexCoord));
-    return (ambient + diffuse + specular);
+    float isShadow = shadowCalculation(lPosition);
+    return (ambient + diffuse*isShadow + specular*isShadow);
 }
