@@ -1,5 +1,5 @@
-#ifndef OPENGL_PREFAB_DIRLIGHT_H
-#define OPENGL_PREFAB_DIRLIGHT_H
+#ifndef OPENGL_PREFAB_SPOTLIGHT_H
+#define OPENGL_PREFAB_SPOTLIGHT_H
 
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
@@ -21,4 +21,4 @@ namespace prefabs {
     void spotLightPrefab(entt::registry &registry); //test
 }
 
-#endif// !OPENGL_PREFAB_DIRLIGHT_H
+#endif// !OPENGL_PREFAB_SPOTLIGHT_H

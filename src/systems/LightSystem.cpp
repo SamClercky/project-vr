@@ -11,7 +11,6 @@ namespace systems {
             const auto &light = view.get<components::Light>(entity);
             //submit
             renderer.submit_light(light.light);
-            renderer.submit_viewPos(cam.position);
         }
     }
 

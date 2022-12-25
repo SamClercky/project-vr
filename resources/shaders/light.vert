@@ -8,6 +8,7 @@ in vec2 texCoord;
 
 out VS_OUT {
 	vec3 position;
+	vec3 worldPosition;
 	vec3 normal;
 	vec2 texCoord;
 	vec3 viewPosition;
@@ -26,6 +27,9 @@ struct Light {
 	float linear;
 	float quadratic;
 
+	float cutOff;
+	float outerCutOff;
+
 	mat4 lightTransform;
 	sampler2D shadowMap;
 };
@@ -35,12 +39,13 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 viewPosition;
 
-uniform Light lights[];
+uniform Light lights[16];
 uniform int numLights;
 
 void main() {
 	gl_Position = projection * view * model * vec4(position, 1.0);
 	vs_out.position = position;
+	vs_out.worldPosition = vec3(model * vec4(position, 1.f));
 	vs_out.normal = transpose(inverse(mat3(model))) * normal;
 	vs_out.texCoord = texCoord;
 	vs_out.viewPosition = viewPosition;

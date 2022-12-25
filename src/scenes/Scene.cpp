@@ -74,7 +74,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
     prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
-    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
+//    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
 
     std::shared_ptr<engine::Model> smokeModel;
     std::shared_ptr<engine::Shader> smokeShader;
