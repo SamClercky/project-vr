@@ -48,10 +48,12 @@ void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm
 
     float near_plane = 1.0f, far_plane = 30.f;
     auto perspective = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-//    auto perspective = glm::perspective(glm::radians(90.0f), 1.f, near_plane, far_plane);
     auto view = glm::lookAt(light.position,
                                   light.position + light.direction,
                                   glm::vec3( 0.0f, 1.0f,  0.0f));
+    if (glm::length(light.direction) == 0.f) { // quick and dirty way to implement point light
+        perspective = glm::perspective(glm::radians(360.0f), 1.f, near_plane, far_plane);
+    }
     lightSpaceMatrix = perspective * view;
 
     if (!depthShader)

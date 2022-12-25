@@ -70,6 +70,10 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     //light test
     prefabs::pointLightPrefab(m_registry);
     prefabs::spotLightPrefab(m_registry);
+    glm::vec3 direction1 = glm::normalize(glm::vec3{1.f, -1.f, 1.f});
+    glm::vec3 direction2 = glm::normalize(glm::vec3{0.f, -1.f, 0.f});
+    prefabs::spotLightPrefab(m_registry, -direction1 * 3.f, direction1);
+    prefabs::spotLightPrefab(m_registry, -direction2 * 3.f, direction2);
 
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;

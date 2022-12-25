@@ -18,6 +18,7 @@ namespace prefabs {
                         float cutOff,
                         float outerCutOff);
 
+    void spotLightPrefab(entt::registry &registry, glm::vec3 position, glm::vec3 direction);
     void spotLightPrefab(entt::registry &registry); //test
 }
 

@@ -37,6 +37,10 @@ void prefabs::spotLightPrefab(entt::registry& registry,
 }
 
 void prefabs::spotLightPrefab(entt::registry &registry) {
+    spotLightPrefab(registry, position, direction);
+}
+
+void prefabs::spotLightPrefab(entt::registry &registry, glm::vec3 position, glm::vec3 direction) {
     prefabs::spotLightPrefab(
             registry,
             position,
