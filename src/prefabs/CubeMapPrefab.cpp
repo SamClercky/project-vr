@@ -258,7 +258,7 @@ namespace prefabs {
         auto entity = registry.create();
         registry.emplace<components::Position>(entity, glm::vec3{0.f});
         registry.emplace<components::Renderable>(entity,
-                                                 std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
+                                                 std::vector<std::shared_ptr<engine::Model>>{asset}, shader, false);
     }
 
     void cubeMapPrefabLoader(std::shared_ptr<engine::Model> &outModel, std::shared_ptr<engine::Shader> &outShader) {
