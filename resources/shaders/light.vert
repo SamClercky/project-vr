@@ -10,6 +10,7 @@ out VS_OUT {
 	vec3 position;
 	vec3 normal;
 	vec2 texCoord;
+	vec3 viewPosition;
 	vec4 lightPositions[16];
 } vs_out;
 
@@ -32,6 +33,7 @@ struct Light {
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec3 viewPosition;
 
 uniform Light lights[];
 uniform int numLights;
@@ -41,6 +43,8 @@ void main() {
 	vs_out.position = position;
 	vs_out.normal = transpose(inverse(mat3(model))) * normal;
 	vs_out.texCoord = texCoord;
+	vs_out.viewPosition = viewPosition;
+
 	for (int i = 0; i < numLights && i < 16; i++) {
 		vs_out.lightPositions[i] = lights[i].lightTransform * model * vec4(position, 1.f);
 	}

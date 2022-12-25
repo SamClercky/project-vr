@@ -28,13 +28,13 @@ in VS_OUT {
     vec3 position;
     vec3 normal;
     vec2 texCoord;
+    vec3 viewPosition;
     vec4 lightPositions[16];
 } fs_in;
 
 uniform vec3 lightColor = vec3(1.0f);
 uniform sampler2D ourTexture;
 
-uniform vec3 viewPos;
 //uniform Material material;
 uniform Light lights[];
 uniform int numLights;
@@ -66,7 +66,7 @@ float shadowCalculation(vec4 lPosition, in sampler2D shadowMap) {
 
 void main() {
 	vec3 norm = normalize(fs_in.normal);
-	vec3 viewDir = normalize(viewPos - fs_in.position);
+	vec3 viewDir = normalize(fs_in.viewPosition - fs_in.position);
 
 	//phase 1: directional lighting
     vec3 result = vec3(0.0f);

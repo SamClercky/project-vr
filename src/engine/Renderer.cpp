@@ -126,6 +126,7 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         shader->setMat4f("view", currFrame.view);
         shader->setMat4f("projection", currFrame.perspective);
         shader->setFloat("time", static_cast<float>(glfwGetTime()));
+        shader->setVec3f("viewPosition", glm::vec3{currFrame.view[3]});
 
         for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
             const auto &light = currFrame.lights[i];
