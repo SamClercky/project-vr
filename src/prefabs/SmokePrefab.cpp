@@ -265,7 +265,7 @@ void prefabs::smokePrefab(std::shared_ptr<engine::Model> &asset,
     auto entity = registry.create();
     registry.emplace<components::Position>(entity, position);
     registry.emplace<components::Renderable>(
-            entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
+            entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader, false);
     registry.emplace<components::RotateAnimation>(entity, 200.);
 }
 

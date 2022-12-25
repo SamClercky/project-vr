@@ -25,7 +25,7 @@ namespace engine {
         ~Window();
         void make_current();
         void set_title(std::string &&title);
-        void loop(const std::function<void(const uint64_t)> &callback);
+        void loop(const std::function<void(const uint64_t, const uint32_t, const uint32_t)> &callback);
 
         // true if pressed
         bool is_key_pressed(ButtonDirections key);

@@ -15,6 +15,7 @@ namespace engine {
     struct RenderObject {
         glm::mat4 modelView;
         RenderAssetRef asset;
+        bool hasShadow;
     };
 
     struct LightObject {
@@ -48,7 +49,8 @@ namespace engine {
             explicit RenderGuard(Frame &renderBin);
             ~RenderGuard();
 
-            void submit(RenderAssetRef obj, glm::mat4 modelView);
+            void submit(RenderAssetRef &&obj, glm::mat4 modelView);
+            void submit(RenderAssetRef &&obj, glm::mat4 modelView, bool hasShadow);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
             void submit_light(LightObject li);
             void submit_viewPos(glm::vec3 position);
@@ -62,13 +64,14 @@ namespace engine {
 
         RenderGuard startRender();
 
-        void render();
+        void render(uint32_t viewWidth, uint32_t viewHeight);
 
     private:
         static bool isGuardActive;
         Frame currFrame;
         Frame nextFrame;
-
+        std::vector<GLint> depthTextures{};
+        std::vector<glm::mat4> lightTransforms{};
     };
 
 }// namespace engine

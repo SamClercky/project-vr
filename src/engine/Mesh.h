@@ -10,6 +10,7 @@
 namespace engine {
 
     struct BoundedMeshGuard {
+        BoundedMeshGuard(BoundedTexture2DGuard guard);
         GLuint ID;
         bool containsEBO;
         GLsizei numberOfTriangles;

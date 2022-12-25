@@ -1,12 +1,6 @@
 #version 330 core
 
 out vec4 FragColor;
-in vec3 vPosition;
-in vec2 vTexCoord;
-in vec3 vNormal;
-
-//uniform vec3 lightColor = vec3(1.0f);
-uniform sampler2D ourTexture;
 
 struct Material {
 	sampler2D diffuseMap;
@@ -28,34 +22,69 @@ struct Light {
 
     float cutOff;
     float outerCutOff;
+
+    mat4 lightTransform;
+    sampler2D shadowMap;
 };
 
-uniform vec3 viewPos;
-//uniform Material material;
-uniform int numLights;
-uniform Light lights[2]; // -> temp fix for the invisible objects bug..
+in VS_OUT {
+    vec3 position;
+    vec3 normal;
+    vec2 texCoord;
+    vec3 viewPosition;
+    vec4 lightPositions[16];
+} fs_in;
 
+uniform vec3 lightColor = vec3(1.0f);
+uniform sampler2D ourTexture;
+
+//uniform Material material;
+uniform Light lights[];
+uniform int numLights;
+
+float shadowCalculation(vec4 lPosition, in sampler2D shadowMap);
+vec3 CalcDirLight(int lightId, vec3 normal, vec3 viewDir, vec4 lPosition);
 vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
+float shadowCalculation(vec4 lPosition, in sampler2D shadowMap) {
+    vec3 shadowCoords = lPosition.xyz / lPosition.w; // maintain compotibility with other perspectives
+    shadowCoords = shadowCoords * .5f + .5f; // between [0,1]
+    float depth = shadowCoords.z;
+    float shadowBias = .005f;
+    vec2 texelSize = 1.f / textureSize(shadowMap, 0);
+    float shadow = 0;
+    for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            float pcfDepth = texture(shadowMap, shadowCoords.xy + vec2(x, y) * texelSize).r; // blur kernel
+            shadow += depth - shadowBias < pcfDepth ? 1.f : 0.f;
+        }
+    }
+    shadow /= 9.f;
+
+    if (depth > 1.f) {
+        shadow = 1.f;
+    }
+
+    return shadow;
+}
+
 void main() {
-	vec3 norm = normalize(vNormal);
-	vec3 viewDir = normalize(viewPos - vPosition);
+    vec3 norm = normalize(fs_in.normal);
+    vec3 viewDir = normalize(fs_in.viewPosition - fs_in.position);
 
     vec3 result = vec3(0.0f);
-    for (int i=0; i<numLights; i++) {
-        Light l = lights[i];
+    for (int i = 0; i < numLights && i < 16; i++) {
         if (l.cutOff == 0.0) {
             result += CalcPointLight(l, norm, vPosition, viewDir);
         } else {
             result += CalcSpotLight(l, norm, vPosition, viewDir);
-        }    
+        }
+        result += CalcDirLight(i, norm, viewDir, fs_in.lightPositions[i]);
     }
-	//FragColor = texture(ourTexture, vTexCoord) * vec4(1.0,0.0,0.0, 1.0);
-    FragColor = vec4(result,1.0);
+
+    FragColor = texture(ourTexture, fs_in.texCoord) * vec4(result, 1.0);
 }
-
-
 
 vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 lightDir = normalize(light.position - fragPos);
@@ -77,9 +106,8 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{
-    vec3 lightDir = normalize(light.position - fragPos);
+vec3 CalcSpotLight(int lightId, vec3 normal, vec3 viewDir, vec4 lPosition) {
+    vec3 lightDir = normalize(-lights[lightId].direction);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
@@ -87,18 +115,15 @@ vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 0.5);
     // attenuation
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     // spotlight intensity
-    float theta = dot(lightDir, normalize(-light.direction)); 
+    float theta = dot(lightDir, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results
-    // used color vec ins.of texture because not all objects have textures yet
-    vec3 ambient = light.ambient * vec3(0.33,0.78,0.86);
-    vec3 diffuse = light.diffuse * diff * vec3(0.33,0.78,0.86);
-    vec3 specular = light.specular * spec * vec3(0.33,0.78,0.86);
-    ambient *= attenuation * intensity;
-    diffuse *= attenuation * intensity;
-    specular *= attenuation * intensity;
-    return (ambient + diffuse + specular);
+    vec3 ambient =  attenuation * intensity * lights[lightId].ambient; //* vec3(texture(material.diffuseMap, vTexCoord));
+    vec3 diffuse =  attenuation * intensity * lights[lightId].diffuse * diff; //* vec3(texture(material.diffuseMap, vTexCoord));
+    vec3 specular = attenuation * intensity * lights[lightId].specular * spec; //* vec3(texture(material.specularMap, vTexCoord));
+    float isShadow = shadowCalculation(lPosition, lights[lightId].shadowMap);
+    return (ambient + diffuse*isShadow + specular*isShadow);
 }

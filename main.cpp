@@ -11,14 +11,14 @@ int main() {
 
     engine::Renderer renderer{};
     scenes::Scene scene{window, renderer};
-    window.loop([&](uint64_t deltaTime) {
-        scene.update(deltaTime);
+    window.loop([&](uint64_t deltaTime, uint32_t viewWidth, uint32_t viewHeight) {
+        scene.update(deltaTime, viewWidth, viewHeight);
         {
             auto renderGuard = renderer.startRender();
             scene.render(renderGuard);
         };
 
-        renderer.render();
+        renderer.render(viewWidth, viewHeight);
     });
 
     return 0;

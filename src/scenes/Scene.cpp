@@ -24,6 +24,7 @@
 #include "systems/DestroyFallOutOfWorldSystem.h"
 #include "prefabs/PlayerPrefab.h"
 #include "components/GameStateGlobals.h"
+#include "prefabs/LightScreenPrefab.h"
 
 using namespace scenes;
 
@@ -59,10 +60,10 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
-    //prefabs::cubePrefabLoader(cubeModel, cubeShader);
+//    prefabs::cubePrefabLoader(cubeModel, cubeShader);
     prefabs::lightCubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
-        //prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
+//        prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
         prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position, m_dynamics_world);
     }
 
@@ -85,12 +86,22 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
+    prefabs::screenPrefab(m_registry, glm::vec3{0.f, 2.f/3.f, -9.3f}, glm::mat3{
+                                                                          3.f, 0.f, 0.f,
+                                                                          0.f, 3.f, 0.f,
+                                                                          0.f, 0.f, 1.f
+                                                                  });
+
     prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);
 }
 
-void Scene::update(uint64_t deltaTime) {
+void Scene::update(uint64_t deltaTime, uint32_t width, uint32_t height) {
     m_registry.ctx().insert_or_assign(components::DeltaTime(deltaTime));
+    auto &state = m_registry.ctx().get<components::GameStateGlobals>();
+    state.viewWidth = width;
+    state.viewHeight = height;
+
     systems::update_viewport_system(m_registry, m_window_ref);
     systems::throwableBulletSystem(m_registry, m_window_ref, m_dynamics_world);
     systems::bulletSystem(m_registry, m_dynamics_world);

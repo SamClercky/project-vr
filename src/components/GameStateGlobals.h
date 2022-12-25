@@ -4,6 +4,8 @@
 namespace components {
     struct GameStateGlobals {
         bool isFreeCam;
+        uint32_t viewWidth;
+        uint32_t viewHeight;
 
         GameStateGlobals()
             : isFreeCam(false)

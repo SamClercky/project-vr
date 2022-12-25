@@ -6,7 +6,7 @@
 
 void prefabs::environmentPrefab(entt::registry & registry, std::shared_ptr<engine::Shader> &prefabShader, std::shared_ptr<engine::Model> &model, std::unique_ptr<btDiscreteDynamicsWorld> &world) {
     const auto entity = registry.create();
-    registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, prefabShader);
+    registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, prefabShader, false);
 
     const float thickness = 1.f;
     const float width = 28.f;
@@ -41,24 +41,17 @@ void prefabs::environmentPrefab(entt::registry & registry, std::shared_ptr<engin
             }), world.get(), size);
     cObject.body->setSleepingThresholds(0.f, 0.f);
     cObject.body->setAngularFactor(0.f);
-
-//    const auto wall1 = registry.create();
-//    registry.emplace<components::CollisionObject>(wall1, components::collisionobject::cube(
-//             world, wall1Size, wall1Pos, glm::mat3{1.f}, 0.f), world.get(), wall1Size);
-//
-//    const auto wall2 = registry.create();
-//    registry.emplace<components::CollisionObject>(wall2, components::collisionobject::cube(
-//            world, wall2Size, wall2Pos, glm::mat3{1.f}, 0.f), world.get(), wall2Size);
-//
-//    const auto wall3 = registry.create();
-//    registry.emplace<components::CollisionObject>(wall3, components::collisionobject::cube(
-//            world, wall3Size, wall3Pos, glm::mat3{1.f}, 0.f), world.get(), wall3Size);
-//
-//    const auto wall4 = registry.create();
-//    registry.emplace<components::CollisionObject>(wall4, components::collisionobject::cube(
-//            world, wall4Size, wall4Pos, glm::mat3{1.f}, 0.f), world.get(), wall4Size);
 }
 void prefabs::environmentPrefabLoader(std::shared_ptr<engine::Shader> &outShader, std::shared_ptr<engine::Model> &outModel) {
-    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "rabbit.vert", RESOURCES_ROOT / "shaders" / "rabbit.frag");
+//    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "rabbit.vert", RESOURCES_ROOT / "shaders" / "rabbit.frag");
+    auto texture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "container.jpg");
+    texture->configure_texture({
+                                           .texture_wrap_s = engine::GLTextureRepeat::Repeat,
+                                           .texture_wrap_t = engine::GLTextureRepeat::Repeat,
+                                           .texture_min_filter = engine::GLFilter::LINEAR,
+                                           .texture_mag_filter = engine::GLFilter::LINEAR,
+                                   });
+    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "light.vert", RESOURCES_ROOT / "shaders" / "light.frag");
     outModel = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "env.obj", outShader);
+    outModel->meshes[0]->attachTexture(texture);
 }

@@ -30,11 +30,12 @@ Mesh::Mesh(std::vector<Vertex> &&vertexData,
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexData.size(),
                  vertexData.data(), GL_STATIC_DRAW);
 
-    auto position_attr = glGetAttribLocation(shader->ID, "position");
-    if (position_attr != -1) {
-        glEnableVertexAttribArray(position_attr);
-        glVertexAttribPointer(position_attr, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, position));
-    }
+//    auto position_attr = glGetAttribLocation(shader->ID, "position");
+    auto position_attr = 0; // make sure position is always on location 0
+//    if (position_attr != -1) {
+    glEnableVertexAttribArray(position_attr);
+    glVertexAttribPointer(position_attr, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, position));
+//    }
     auto normal_attr = glGetAttribLocation(shader->ID, "normal");
     if (normal_attr != -1) {
         glEnableVertexAttribArray(normal_attr);
@@ -58,11 +59,6 @@ Mesh::Mesh(std::vector<Vertex> &&vertexData,
     glBindVertexArray(0);
 }
 void BoundedMeshGuard::draw() const {
-    BoundedTexture2DGuard guards[16];
-    for (uint8_t i = 0; i < textures.size() && i < 16; i++) {
-        guards[i] = textures[i]->bind(i);
-    }
-
     if (containsEBO)
         glDrawElements(GL_TRIANGLES, numberOfTriangles, GL_UNSIGNED_INT,
                        nullptr);
