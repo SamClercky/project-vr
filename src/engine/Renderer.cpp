@@ -49,6 +49,7 @@ void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm
     glReadBuffer(GL_NONE);
 
     // draw
+    glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, LIGHT_WIDTH, LIGHT_HEIGHT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -189,12 +190,15 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
     {
         auto guard = screenQuad->meshes[0]->bind();
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+
         postProcessingShader->use();
         postProcessingShader->setFloat("time", static_cast<float>(glfwGetTime()));
         postProcessingShader->setFloat("screenWidth", static_cast<float>(viewWidth));
         postProcessingShader->setFloat("screenHeight", static_cast<float>(viewHeight));
+        postProcessingShader->setInt("screenTexture", 0); // bind screen to correct texture
 
-        glBindTexture(GL_TEXTURE_2D, texColorBuffer);
         guard.draw();
     }
 }
