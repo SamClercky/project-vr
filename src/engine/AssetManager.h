@@ -12,6 +12,10 @@
 #define RESOURCES_SRC_ROOT std::filesystem::path{"src"}
 
 namespace engine {
+    enum class PrimitiveShape {
+        Cube, Quad
+    };
+
     class AssetManager {
     public:
         AssetManager()
@@ -36,6 +40,9 @@ namespace engine {
         std::shared_ptr<Shader> loadShader(const std::filesystem::path &vertexPath,
                                            const std::filesystem::path &geometryPath,
                                            const std::filesystem::path &fragmentPath);
+        std::shared_ptr<Model> loadPrimitive(const std::filesystem::path path,
+                                                           PrimitiveShape shape,
+                                                           std::shared_ptr<Shader> &shader);
 
         void submitMesh(const std::filesystem::path &path, const std::shared_ptr<Mesh>& mesh) {
             meshStore.insert(std::make_pair(path, mesh));

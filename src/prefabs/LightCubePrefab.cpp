@@ -8,56 +8,6 @@
 #include "components/CollisionObject.h"
 #include <entt/entt.hpp>
 
-namespace {
-
-	//change to use vertex, no normals yet
-    auto cubeVertices = std::vector{
-           engine::Vertex{ -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f },
-           engine::Vertex{  0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f },
-           engine::Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f },
-           engine::Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f },
-           engine::Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f },
-           engine::Vertex{ -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f },
-
-           engine::Vertex{ -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f },
-           engine::Vertex{  0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f },
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f },
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f },
-           engine::Vertex{ -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f },
-           engine::Vertex{ -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f },
-
-           engine::Vertex{ -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{ -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f },
-           engine::Vertex{ -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{ -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{ -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f },
-           engine::Vertex{ -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
-
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{  0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f },
-           engine::Vertex{  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{  0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f },
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
-
-           engine::Vertex{ -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f },
-           engine::Vertex{  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{ -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f },
-           engine::Vertex{ -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f },
-
-           engine::Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f },
-           engine::Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f },
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f },
-           engine::Vertex{ -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f },
-           engine::Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f },
-    };
-
-    //define material ig...
-}
-
 void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
                               std::shared_ptr<engine::Shader> &shader,
                               entt::registry &registry,
@@ -85,11 +35,7 @@ void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
 
     outShader = engine::GlobalAssetManager.loadShader(
             RESOURCES_ROOT / "shaders" / "light.vert", RESOURCES_ROOT / "shaders" / "light.frag");
-    auto mesh = std::make_shared<engine::Mesh>(
-            std::move(cubeVertices),
-            std::vector<uint32_t>{},
-            std::vector<std::shared_ptr<engine::Texture2D>>{cubeTexture},
-            outShader);
-    engine::GlobalAssetManager.submitMesh(RESOURCES_SRC_ROOT / "prefabs" / "LightCube.cpp", mesh);
-    outModel = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
+    outModel = engine::GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "prefabs" / "LightCubePrefab.cpp",
+                                                        engine::PrimitiveShape::Cube, outShader);
+    outModel->meshes[0]->attachTexture(cubeTexture);
 }

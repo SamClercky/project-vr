@@ -8,6 +8,63 @@
 #include <assimp/scene.h>
 
 namespace engine {
+
+    //change to use vertex, no normals yet
+    static auto cubeVertices = std::vector{
+            Vertex{ -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f },
+            Vertex{  0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f },
+            Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f },
+            Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f },
+            Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f },
+            Vertex{ -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f },
+
+            Vertex{ -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f },
+            Vertex{  0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f },
+            Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f },
+            Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f },
+            Vertex{ -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f },
+            Vertex{ -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f },
+
+            Vertex{ -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{ -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f },
+            Vertex{ -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{ -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{ -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f },
+            Vertex{ -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
+
+            Vertex{  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{  0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f },
+            Vertex{  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{  0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f },
+            Vertex{  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f },
+
+            Vertex{ -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f },
+            Vertex{  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{ -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f },
+            Vertex{ -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f },
+
+            Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f },
+            Vertex{  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f },
+            Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f },
+            Vertex{ -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f },
+            Vertex{ -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f },
+    };
+
+    static auto verticesQuad = std::vector<engine::Vertex>{
+            // positions        // texture coords
+            engine::Vertex{0.5f,  0.5f, 0.0f, 1.0f, 1.0f},   // top right
+            engine::Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f},   // bottom right
+            engine::Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f},   // bottom left
+            engine::Vertex{-0.5f,  0.5f, 0.0f, 0.0f, 1.0f},    // top left
+            engine::Vertex{0.5f,  0.5f, 0.0f, 1.0f, 1.0f},   // top right
+            engine::Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f},   // bottom left
+    };
+
+
     AssetManager GlobalAssetManager = AssetManager{};
 
     std::shared_ptr<Texture2D> AssetManager::loadTexture(const std::filesystem::path &path, TextureConfig &&config) {
@@ -194,5 +251,24 @@ namespace engine {
                 fragmentPath);
         shaderStore.insert(std::make_pair(key, shader));
         return shader;
+    }
+
+    std::shared_ptr<Model> AssetManager::loadPrimitive(const std::filesystem::path path,
+                                                       PrimitiveShape shape,
+                                                       std::shared_ptr<Shader> &shader) {
+        std::vector<Vertex> data;
+        switch (shape) {
+            case PrimitiveShape::Cube: data = cubeVertices; break;
+            case PrimitiveShape::Quad: data = verticesQuad; break;
+        }
+        if (modelStore.contains(path))
+            return modelStore.at(path);
+
+        auto mesh = std::make_shared<Mesh>(std::move(data), shader);
+        submitMesh(path, mesh);
+        auto model = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
+        submitModel(path, model);
+
+        return model;
     }
 }// namespace engine
