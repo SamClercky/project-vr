@@ -185,10 +185,18 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
     glClearColor(1.f, 1.f, 1.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
-    auto guard = screenQuad->meshes[0]->bind();
-    postProcessingShader->use();
-    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    guard.draw();
+
+    {
+        auto guard = screenQuad->meshes[0]->bind();
+
+        postProcessingShader->use();
+        postProcessingShader->setFloat("time", static_cast<float>(glfwGetTime()));
+        postProcessingShader->setFloat("screenWidth", static_cast<float>(viewWidth));
+        postProcessingShader->setFloat("screenHeight", static_cast<float>(viewHeight));
+
+        glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+        guard.draw();
+    }
 }
 
 void Renderer::viewportChanged(uint32_t viewWidth, uint32_t viewHeight) {
