@@ -53,7 +53,6 @@ namespace engine {
             void submit(RenderAssetRef &&obj, glm::mat4 modelView, bool hasShadow);
             void submit_camera(glm::mat4 perspective, glm::mat4 view);
             void submit_light(LightObject li);
-            void submit_viewPos(glm::vec3 position);
 
         private:
             Frame &renderBin;
@@ -72,6 +71,13 @@ namespace engine {
         Frame nextFrame;
         std::vector<GLint> depthTextures{};
         std::vector<glm::mat4> lightTransforms{};
+        uint32_t prevViewWidth = 0;
+        uint32_t prevViewHeight = 0;
+        uint32_t fbo = -1;
+        uint32_t texColorBuffer = -1;
+        uint32_t rbo = -1;
+
+        void viewportChanged(uint32_t viewWidth, uint32_t viewHeight);
     };
 
 }// namespace engine

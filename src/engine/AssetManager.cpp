@@ -55,13 +55,13 @@ namespace engine {
     };
 
     static auto verticesQuad = std::vector<engine::Vertex>{
-            // positions        // texture coords
-            engine::Vertex{0.5f,  0.5f, 0.0f, 1.0f, 1.0f},   // top right
-            engine::Vertex{0.5f, -0.5f, 0.0f, 1.0f, 0.0f},   // bottom right
-            engine::Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f},   // bottom left
-            engine::Vertex{-0.5f,  0.5f, 0.0f, 0.0f, 1.0f},    // top left
-            engine::Vertex{0.5f,  0.5f, 0.0f, 1.0f, 1.0f},   // top right
-            engine::Vertex{-0.5f, -0.5f, 0.0f, 0.0f, 0.0f},   // bottom left
+            engine::Vertex{-1.0f,  1.0f, 0.f,  0.0f, 1.0f},
+            engine::Vertex{-1.0f, -1.0f, 0.f,  0.0f, 0.0f},
+            engine::Vertex{1.0f, -1.0f, 0.f, 1.0f, 0.0f},
+
+            engine::Vertex{-1.0f,  1.0f, 0.f, 0.0f, 1.0f},
+            engine::Vertex{1.0f, -1.0f, 0.f, 1.0f, 0.0f},
+            engine::Vertex{1.0f,  1.0f, 0.f, 1.0f, 1.0f}
     };
 
 

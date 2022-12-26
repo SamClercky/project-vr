@@ -5,6 +5,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include <glm/glm.hpp>
 
+#include <iostream>
 #include <utility>
 
 using namespace engine;
@@ -13,8 +14,13 @@ void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm
 
 bool Renderer::isGuardActive = false;
 static std::shared_ptr<Shader> depthShader;
+static std::shared_ptr<Shader> postProcessingShader;
+static std::shared_ptr<Model> screenQuad;
 
-Renderer::Renderer() : currFrame(), nextFrame() {}
+Renderer::Renderer() : currFrame(), nextFrame() {
+    postProcessingShader = GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "post.vert", RESOURCES_ROOT / "shaders" / "post.frag");
+    screenQuad = GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "engine" / "Renderer.cpp", PrimitiveShape::Quad, postProcessingShader);
+}
 
 Renderer::RenderGuard Renderer::startRender() {
     return Renderer::RenderGuard(nextFrame);
@@ -78,6 +84,10 @@ void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm
 }
 
 void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
+    if (viewWidth != prevViewWidth || viewHeight != prevViewHeight) {
+        viewportChanged(viewWidth, viewHeight);
+    }
+
     if (!isGuardActive) {
         std::swap(currFrame.objects, nextFrame.objects);
         nextFrame.objects.clear();
@@ -112,7 +122,10 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         renderShadowsMaps(light, currFrame, depthTexture, lightTransform);
     }
 
+    // render to framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glCullFace(GL_BACK);
+    glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, (GLint)viewWidth, (GLint)viewHeight);
     glClearColor(.2f, .3f, .3f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -166,6 +179,54 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
 
         meshGuard.draw();
     }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // render to screen
+    glClearColor(1.f, 1.f, 1.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    auto guard = screenQuad->meshes[0]->bind();
+    postProcessingShader->use();
+    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+    guard.draw();
+}
+
+void Renderer::viewportChanged(uint32_t viewWidth, uint32_t viewHeight) {
+    prevViewHeight = viewHeight;
+    prevViewWidth = viewWidth;
+
+    // do some cleanup
+    if (texColorBuffer != -1)
+        glDeleteTextures(1, &texColorBuffer);
+    if (rbo != -1)
+        glDeleteRenderbuffers(1, &rbo);
+
+    // fbo
+    if (fbo == -1) // only first time, generate new fbo
+        glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // texture
+    glGenTextures(1, &texColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (GLsizei)viewWidth, (GLsizei)viewHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+
+    // rbo
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (GLsizei)viewWidth, (GLsizei)viewHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cerr << "ERROR::FRAMEBUFFER not complete" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // cleanup
 }
 
 Renderer::RenderGuard::RenderGuard(Frame &renderBin) : renderBin(renderBin) {
