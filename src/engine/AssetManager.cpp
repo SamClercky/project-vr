@@ -154,8 +154,9 @@ namespace engine {
     }
 
     std::shared_ptr<Model> AssetManager::loadModel(const std::filesystem::path &path, std::shared_ptr<Shader> &shader) {
-        if (modelStore.contains(path))
-            return modelStore.at(path);
+        auto key = path / std::format("{}", shader->ID);
+        if (modelStore.contains(key))
+            return modelStore.at(key);
 
         Assimp::Importer importer;
         const auto *scene = importer.ReadFile(path.string().c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
@@ -215,7 +216,7 @@ namespace engine {
 
                 // Put everything into the model
                 auto mesh = std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures), shader);
-                meshStore.insert(std::make_pair(path, mesh));
+                meshStore.insert(std::make_pair(key, mesh));
                 model->meshes.push_back(mesh);
             }
 
@@ -261,13 +262,14 @@ namespace engine {
             case PrimitiveShape::Cube: data = cubeVertices; break;
             case PrimitiveShape::Quad: data = verticesQuad; break;
         }
-        if (modelStore.contains(path))
-            return modelStore.at(path);
+        auto key = path / std::format("{}", shader->ID);
+        if (modelStore.contains(key))
+            return modelStore.at(key);
 
         auto mesh = std::make_shared<Mesh>(std::move(data), shader);
-        submitMesh(path, mesh);
+        submitMesh(key, mesh);
         auto model = std::make_shared<engine::Model>(std::vector<std::shared_ptr<engine::Mesh>>{mesh});
-        submitModel(path, model);
+        submitModel(key, model);
 
         return model;
     }
