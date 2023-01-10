@@ -9,8 +9,8 @@ void prefabs::environmentPrefab(entt::registry & registry, std::shared_ptr<engin
     registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, prefabShader, false);
 
     const float thickness = 1.f;
-    const float width = 28.f;
-    const float height = 18.5f;
+    const float width = 24.f;
+    const float height = 24.f;
     float wallHeight = 100.f;
 
     glm::vec3 position{0.f, 0.f, 0.f};
@@ -44,14 +44,14 @@ void prefabs::environmentPrefab(entt::registry & registry, std::shared_ptr<engin
 }
 void prefabs::environmentPrefabLoader(std::shared_ptr<engine::Shader> &outShader, std::shared_ptr<engine::Model> &outModel) {
 //    outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "rabbit.vert", RESOURCES_ROOT / "shaders" / "rabbit.frag");
-    auto texture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "container.jpg");
+    auto texture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "room_bake.png");
     texture->configure_texture({
-                                           .texture_wrap_s = engine::GLTextureRepeat::Repeat,
-                                           .texture_wrap_t = engine::GLTextureRepeat::Repeat,
+                                           .texture_wrap_s = engine::GLTextureRepeat::IGNORE,
+                                           .texture_wrap_t = engine::GLTextureRepeat::IGNORE,
                                            .texture_min_filter = engine::GLFilter::LINEAR,
                                            .texture_mag_filter = engine::GLFilter::LINEAR,
                                    });
     outShader = engine::GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "light.vert", RESOURCES_ROOT / "shaders" / "light.frag");
-    outModel = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "env.obj", outShader);
+    outModel = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "room.obj", outShader);
     outModel->meshes[0]->attachTexture(texture);
 }

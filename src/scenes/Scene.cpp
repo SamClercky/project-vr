@@ -90,7 +90,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
-    prefabs::screenPrefab(m_registry, glm::vec3{0.f, 2.f/3.f, -9.3f}, glm::mat3{
+    prefabs::screenPrefab(m_registry, glm::vec3{0.f, 2.f/3.f, -12.0f}, glm::mat3{
                                                                           3.f, 0.f, 0.f,
                                                                           0.f, 3.f, 0.f,
                                                                           0.f, 0.f, 1.f
