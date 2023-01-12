@@ -112,6 +112,6 @@ void Scene::render(engine::Renderer::RenderGuard &renderer) {
     systems::lightSystem(renderer, m_registry);
     systems::drawSystem(renderer, m_registry);
 
-    if (engine::Window::is_debug_mode())
+    if (m_window_ref.is_key_pressed(engine::Window::ButtonDirections::Debug))
         systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
 }

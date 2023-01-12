@@ -13,7 +13,13 @@ static int m_width = 0.f;
 static int m_height = 0.f;
 static bool hasViewportChanged = true;
 
-static bool debugMode = false;
+static bool was_key_fly_pressed = false;
+static bool was_key_shoot_pressed = false;
+static bool was_key_debug_pressed = false;
+static bool was_key_fullscreen_pressed = false;
+
+static bool key_debug_status = false;
+static bool key_fullscreen_status = false;
 
 // Debug setup code from exercises
 #ifndef NDEBUG
@@ -180,6 +186,30 @@ void Window::loop(const std::function<void(const uint64_t, const uint32_t, const
     // vsync
     glfwSwapInterval(1);
     while (!glfwWindowShouldClose(m_window)) {
+        // update fullscreen status if needed
+        bool fs_status = glfwGetKey(m_window, GLFW_KEY_F11);
+        bool condition = fs_status ^ was_key_fullscreen_pressed && fs_status;
+        was_key_fullscreen_pressed = fs_status;
+
+        if (condition) {
+            auto *monitor = glfwGetWindowMonitor(m_window);
+            if (!monitor) {
+                int count;
+                auto **monitors = glfwGetMonitors(&count);
+                if (count > 0) {
+                    monitor = monitors[0];
+                    const auto *mode = glfwGetVideoMode(monitor);
+                    m_width = mode->width;
+                    m_height = mode->height;
+                }
+            } else {
+                monitor = nullptr;
+                m_width = 800;
+                m_height = 600;
+            }
+            glfwSetWindowMonitor(m_window, monitor, 100, 100, m_width, m_height, GLFW_DONT_CARE);
+        }
+
         // update delta
         auto currTime = (uint64_t) (glfwGetTime() * 1000.0);
         auto delta = currTime - prevTime;
@@ -196,6 +226,7 @@ void Window::loop(const std::function<void(const uint64_t, const uint32_t, const
     }
 }
 bool Window::is_key_pressed(Window::ButtonDirections key) {
+    bool status, result;
     switch (key) {
         case Window::ButtonDirections::Up:
             return (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) || (get_joystick_value(GLFW_JOYSTICK_1, 1) < -.5f);
@@ -206,9 +237,27 @@ bool Window::is_key_pressed(Window::ButtonDirections key) {
         case Window::ButtonDirections::Right:
             return glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS || (get_joystick_value(GLFW_JOYSTICK_1, 0) < -.5f);
         case Window::ButtonDirections::Shoot:
-            return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 4);
+            status = glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 4);
+            result = status ^ was_key_shoot_pressed && status;
+            was_key_shoot_pressed = status;
+
+            return result;
         case Window::ButtonDirections::Fly:
-            return glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 0);
+            status = glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 2);
+            result = status ^ was_key_fly_pressed && status;
+            was_key_fly_pressed = status;
+
+            return result;
+        case Window::ButtonDirections::Debug:
+            status = glfwGetKey(m_window, GLFW_KEY_I) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 1);
+            result = status ^ was_key_debug_pressed && status;
+            was_key_debug_pressed = status;
+            if (result)
+                key_debug_status = !key_debug_status;
+
+            return key_debug_status;
+        case Window::ButtonDirections::Jump:
+            return glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 0);
     }
 }
 
@@ -252,14 +301,6 @@ bool Window::get_viewport(int &width, int &height) {
     return hasChanged;
 }
 
-bool Window::is_debug_mode() {
-#ifndef NDEBUG
-    return debugMode;
-#else
-    return false;
-#endif
-}
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     hasViewportChanged = true;
@@ -270,8 +311,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS || get_joystick_button(GLFW_JOYSTICK_1, 1))
-        debugMode = !debugMode;
 }
 
 float get_joystick_value(int glfw_joystick, unsigned int axis) {
