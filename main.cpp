@@ -7,7 +7,7 @@
 int main() {
     std::cout << "Starting program" << std::endl;
 
-    auto window = engine::Window(800, 600, std::string{"Hello world"});
+    auto window = engine::Window(800, 600, std::string{"Project VR"});
 
     engine::Renderer renderer{};
     scenes::Scene scene{window, renderer};
