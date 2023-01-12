@@ -65,7 +65,7 @@ btRigidBody* components::collisionobject::cubeCompound(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,
         glm::vec3 position,
         glm::mat3 orientation,
-        float mass, std::vector<CubeShape> cubes) {
+        float mass, const std::vector<CubeShape>& cubes) {
     // needs rescaling to match the rest of the engine (probably size measured as from origin)
 //    btCollisionShape *shape = new btCompoundShape(btVector3(size.x, size.y, size.z) * .5f);
     auto *shape = new btCompoundShape(true, (int)cubes.size());

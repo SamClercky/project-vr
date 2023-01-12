@@ -4,6 +4,10 @@ project(Project-VR)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+if (MSVC) # add RTTI data, needed for dynamic cast
+    add_compile_options(/GR)
+endif ()
+
 # OpenGL
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -113,7 +117,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Add compiler warnings
 if (MSVC)
-    add_compile_options(/W4)
+    add_compile_options(/W4 /GR)
 else ()
     add_compile_options(-Wall -Wextra -pedantic)
 endif ()

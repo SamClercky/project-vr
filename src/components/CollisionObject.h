@@ -46,7 +46,7 @@ namespace components {
                 std::unique_ptr<btDiscreteDynamicsWorld> &world,
                 glm::vec3 position,
                 glm::mat3 orientation,
-                float mass, std::vector<CubeShape> cubes);
+                float mass, const std::vector<CubeShape>& cubes);
     }
 }
 
