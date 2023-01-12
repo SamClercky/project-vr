@@ -44,6 +44,6 @@ void systems::bulletSystem(entt::registry &registry, std::unique_ptr<btDiscreteD
                 transform.getOrigin().getZ()};
 
         position.set_rotation(orientation);
-        position.set_translation(pos);
+        position.set_translation(pos - collisionObject.offset);
     }
 }

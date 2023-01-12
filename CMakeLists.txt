@@ -78,7 +78,7 @@ set(PROJECT-SRC
         src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h
         src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h
         src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
-        src/prefabs/LightCubePrefab.h src/prefabs/LightCubePrefab.cpp
+        src/prefabs/Table.h src/prefabs/Table.cpp
         src/prefabs/SpotLightPrefab.h src/prefabs/SpotLightPrefab.cpp
         src/prefabs/PointLightPrefab.h src/prefabs/PointLightPrefab.cpp
 

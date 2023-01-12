@@ -68,9 +68,9 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
         orientation[2] *= collisionObject.size.z;
 
         glm::vec3 translation{
-                transform.getOrigin().getX() - collisionObject.offset.x,
-                transform.getOrigin().getY() - collisionObject.offset.y,
-                transform.getOrigin().getZ() - collisionObject.offset.z,
+                transform.getOrigin().getX(),
+                transform.getOrigin().getY(),
+                transform.getOrigin().getZ(),
         };
         glm::mat4 modelView{
             glm::vec4{orientation[0], translation.x},

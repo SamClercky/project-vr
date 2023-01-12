@@ -1,4 +1,4 @@
-#include "LightCubePrefab.h"
+#include "Table.h"
 
 #include "engine/Mesh.h"
 #include "engine/AssetManager.h"
@@ -18,9 +18,9 @@ void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
     registry.emplace<components::Renderable>(
             entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
     registry.emplace<components::RotateAnimation>(entity, 10.f);
-    glm::vec3 size{1.f};
+    glm::vec3 size{2.f, 1.2f, 4.3f};
     registry.emplace<components::CollisionObject>(entity, components::collisionobject::cube(world, size, position, glm::mat3{1.f}, 1.0),
-                                                  world.get(), size);
+                                                  world.get(), size, glm::vec3{0.f, .8f, 0.f});
 }
 
 void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
@@ -35,7 +35,8 @@ void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
 
     outShader = engine::GlobalAssetManager.loadShader(
             RESOURCES_ROOT / "shaders" / "light.vert", RESOURCES_ROOT / "shaders" / "light.frag");
-    outModel = engine::GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "prefabs" / "LightCubePrefab.cpp",
-                                                        engine::PrimitiveShape::Cube, outShader);
+//    outModel = engine::GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "prefabs" / "LightCubePrefab.cpp",
+//                                                        engine::PrimitiveShape::Cube, outShader);
+    outModel = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "table.obj", outShader);
     outModel->meshes[0]->attachTexture(cubeTexture);
 }

@@ -1,5 +1,5 @@
-#ifndef OPENGL_PREFAB_LIGHTCUBE_H
-#define OPENGL_PREFAB_LIGHTCUBE_H
+#ifndef OPENGL_PREFAB_TABLE_H
+#define OPENGL_PREFAB_TABLE_H
 
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "engine/Model.h"
@@ -19,4 +19,4 @@ namespace prefabs {
 }// namespace prefabs
 
 
-#endif// !OPENGL_PREFAB_LIGHTCUBE_H
+#endif// !OPENGL_PREFAB_TABLE_H
