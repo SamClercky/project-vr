@@ -40,4 +40,7 @@ void main() {
     } else {
         FragColor = screenColor;
     }
+
+    // Gamma correction
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.f/2.2f));
 }
