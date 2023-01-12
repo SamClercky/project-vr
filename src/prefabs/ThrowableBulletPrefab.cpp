@@ -26,12 +26,12 @@ void prefabs::throwableBulletPrefab(entt::registry &registry,
     const auto entity = registry.create();
     registry.emplace<components::Position>(entity, position, .1f);
     glm::vec3 size{0.2f};
-    const auto &cObject = registry.emplace<components::CollisionObject>(entity, components::collisionobject::cube(
+    const auto &cObject = registry.emplace<components::CollisionObject>(entity, components::collisionObject::cube(
                                                                   world,
                                                                   size,
                                                                   position,
                                                                   glm::mat3{1.f},
-                                                                  0.2f), world.get(), size);
+                                                                  0.2f), world.get());
     cObject.applyImpulse(impulse);
     registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, shader);
     registry.emplace<components::ShortLivedObject>(entity, 10.f);

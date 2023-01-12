@@ -18,9 +18,9 @@ void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
     registry.emplace<components::Renderable>(
             entity, std::vector<std::shared_ptr<engine::Model>>{asset}, shader);
     registry.emplace<components::RotateAnimation>(entity, 10.f);
-    glm::vec3 size{2.f, 1.2f, 4.3f};
-    registry.emplace<components::CollisionObject>(entity, components::collisionobject::cube(world, size, position, glm::mat3{1.f}, 1.0),
-                                                  world.get(), size, glm::vec3{0.f, .8f, 0.f});
+    glm::vec3 size{2.f, 1.2f, 4.8f};
+    registry.emplace<components::CollisionObject>(entity, components::collisionObject::cube(world, size, position, glm::mat3{1.f}, 1.0),
+                                                  world.get(), glm::vec3{0.05f, .9f, .15f});
 }
 
 void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,

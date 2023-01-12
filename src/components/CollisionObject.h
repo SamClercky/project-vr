@@ -14,15 +14,14 @@ namespace components {
         btDiscreteDynamicsWorld *world;
 
         glm::vec3 offset;
-        glm::vec3 size;
 
-        CollisionObject(btRigidBody *body, btDiscreteDynamicsWorld *world, glm::vec3 size): body(body), world(world), size(size), offset(glm::vec3{0.f}) {}
-        CollisionObject(btRigidBody *body, btDiscreteDynamicsWorld *world, glm::vec3 size, glm::vec3 offset): body(body), world(world), size(size), offset(offset) {}
+        CollisionObject(btRigidBody *body, btDiscreteDynamicsWorld *world): body(body), world(world), offset(glm::vec3{0.f}) {}
+        CollisionObject(btRigidBody *body, btDiscreteDynamicsWorld *world, glm::vec3 offset): body(body), world(world), offset(offset) {}
 
         void applyImpulse(glm::vec3 impulse) const;
     };
 
-    namespace collisionobject {
+    namespace collisionObject {
         struct CubeShape {
             glm::vec3 size;
             glm::vec3 position;

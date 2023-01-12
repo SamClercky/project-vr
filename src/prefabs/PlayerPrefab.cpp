@@ -9,8 +9,8 @@ void prefabs::playerPrefab(entt::registry &registry, std::unique_ptr<btDiscreteD
     glm::vec3 size{1.f, 2.5f, 1.f};
     registry.emplace<components::Position>(entity, position);
     auto &cObject = registry.emplace<components::CollisionObject>(entity,
-                                                  components::collisionobject::cube(world, size, position, glm::mat3{1.f}, 1.f),
-                                                  world.get(), size);
+                                                  components::collisionObject::cube(world, size, position, glm::mat3{1.f}, 1.f),
+                                                  world.get());
     cObject.body->setSleepingThresholds(0.f, 0.f);
     cObject.body->setAngularFactor(0.f);
 

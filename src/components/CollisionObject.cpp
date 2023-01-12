@@ -23,7 +23,7 @@ btMatrix3x3 toBullet(glm::mat3 m) {
     };
 }
 
-btRigidBody* components::collisionobject::cubeKinematic(
+btRigidBody* components::collisionObject::cubeKinematic(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,
         glm::vec3 size,
         glm::vec3 position,
@@ -36,7 +36,7 @@ btRigidBody* components::collisionobject::cubeKinematic(
         return body;
 }
 
-btRigidBody* components::collisionobject::cube(
+btRigidBody* components::collisionObject::cube(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,
         glm::vec3 size,
         glm::vec3 position,
@@ -61,7 +61,7 @@ btRigidBody* components::collisionobject::cube(
     return rigidBody;
 }
 
-btRigidBody* components::collisionobject::cubeCompound(
+btRigidBody* components::collisionObject::cubeCompound(
         std::unique_ptr<btDiscreteDynamicsWorld> &world,
         glm::vec3 position,
         glm::mat3 orientation,

@@ -59,10 +59,8 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     std::shared_ptr<engine::Model> cubeModel;
     std::shared_ptr<engine::Shader> cubeShader;
-//    prefabs::cubePrefabLoader(cubeModel, cubeShader);
     prefabs::lightCubePrefabLoader(cubeModel, cubeShader);
     for (auto position: cubePositions) {
-//        prefabs::cubePrefab(cubeModel, cubeShader, m_registry, position);
         prefabs::lightCubePrefab(cubeModel, cubeShader, m_registry, position, m_dynamics_world);
     }
 
@@ -77,7 +75,6 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
     prefabs::rabbitPrefabLoader(rabbitModel, rabbitShader);
-//    prefabs::rabbitPrefab(rabbitModel, rabbitShader, m_registry, glm::vec3{0.f});
 
     std::shared_ptr<engine::Model> smokeModel;
     std::shared_ptr<engine::Shader> smokeShader;
@@ -121,5 +118,4 @@ void Scene::render(engine::Renderer::RenderGuard &renderer) {
 
     if (engine::Window::is_debug_mode())
         systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
-    //add light system call?
 }
