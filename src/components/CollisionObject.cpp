@@ -44,6 +44,11 @@ btRigidBody* components::collisionObject::cube(
         float mass) {
     // needs rescaling to match the rest of the engine (probably size measured as from origin)
     btCollisionShape *shape = new btBoxShape(btVector3(size.x, size.y, size.z) * .5f);
+
+    btVector3 localInertia{0.f, 0.f, 0.f};
+    if (mass != 0.f) // not dynamic, needs inertia
+        shape->calculateLocalInertia(mass, localInertia);
+
     auto quat = glm::quat_cast(orientation);
     auto *motionState = new btDefaultMotionState(btTransform(
             btQuaternion(quat.x, quat.y, quat.z, quat.w),
@@ -53,7 +58,7 @@ btRigidBody* components::collisionObject::cube(
             mass,
             motionState,
             shape,
-            btVector3{0.f, 0.f, 0.f}
+            localInertia
     };
     auto *rigidBody = new btRigidBody(rigidBodyInfo);
     world->addRigidBody(rigidBody);
@@ -74,6 +79,10 @@ btRigidBody* components::collisionObject::cubeCompound(
                 btTransform{toBullet(cube.orientation), toBullet(cube.position)},
                 new btBoxShape(btVector3(cube.size.x, cube.size.y, cube.size.z) * .5f));
 
+    btVector3 localInertia{0.f, 0.f, 0.f};
+    if (mass != 0.f) // not dynamic, needs inertia
+        shape->calculateLocalInertia(mass, localInertia);
+
     auto quat = glm::quat_cast(orientation);
     auto *motionState = new btDefaultMotionState(btTransform(
             btQuaternion(quat.x, quat.y, quat.z, quat.w),
@@ -83,7 +92,7 @@ btRigidBody* components::collisionObject::cubeCompound(
             mass,
             motionState,
             shape,
-            btVector3{0.f, 0.f, 0.f}
+            localInertia
     };
     auto *rigidBody = new btRigidBody(rigidBodyInfo);
     world->addRigidBody(rigidBody);

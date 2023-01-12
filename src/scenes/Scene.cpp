@@ -43,11 +43,11 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     m_dynamics_world = setup_physics();
 
     glm::vec3 cubePositions[] = {
-            /*glm::vec3(0.0f, 0.0f, 0.0f),*/ glm::vec3(2.0f, 5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3(2.4f, -0.4f, -3.5f), glm::vec3(-1.7f, 3.0f, -7.5f),
-            glm::vec3(1.3f, -2.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
-            glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
+            glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, 5.0f, -10.0f),
+            glm::vec3(-1.5f, 6.2f, -2.5f), glm::vec3(-3.8f, 1.f, -10.3f),
+            glm::vec3(2.4f, 1.0f, -3.5f), glm::vec3(-1.7f, 3.0f, -7.5f),
+            glm::vec3(1.3f, 4.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
+            glm::vec3(1.5f, 1.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
     m_registry.ctx().emplace<components::GameStateGlobals>();
