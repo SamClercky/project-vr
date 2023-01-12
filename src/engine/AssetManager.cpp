@@ -67,11 +67,12 @@ namespace engine {
 
     AssetManager GlobalAssetManager = AssetManager{};
 
-    std::shared_ptr<Texture2D> AssetManager::loadTexture(const std::filesystem::path &path, TextureConfig &&config) {
+    std::shared_ptr<Texture2D> AssetManager::loadTexture(const std::filesystem::path &path, bool flipVertically, const TextureConfig config) {
         if (textureStore.contains(path))
             return textureStore.at(path);
 
         int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(flipVertically);
         uint8_t *data = stbi_load(
                 reinterpret_cast<const char *>(path.string().c_str()),
                 &width, &height, &nrChannels, 0);
@@ -254,7 +255,7 @@ namespace engine {
         return shader;
     }
 
-    std::shared_ptr<Model> AssetManager::loadPrimitive(const std::filesystem::path path,
+    std::shared_ptr<Model> AssetManager::loadPrimitive(const std::filesystem::path& path,
                                                        PrimitiveShape shape,
                                                        std::shared_ptr<Shader> &shader) {
         std::vector<Vertex> data;

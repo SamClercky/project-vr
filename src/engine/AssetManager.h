@@ -27,7 +27,13 @@ namespace engine {
         AssetManager(AssetManager &&other) = delete;
 
         std::shared_ptr<Texture2D> loadTexture(const std::filesystem::path &path,
-                                               TextureConfig &&config = TextureConfig{});
+                                               bool flipVertically,
+                                               const TextureConfig config = TextureConfig{});
+        std::shared_ptr<Texture2D> loadTexture(const std::filesystem::path &path,
+                                               const TextureConfig &config = TextureConfig{}) {
+            return this->loadTexture(path, false, config);
+        }
+
         std::shared_ptr<Texture2D> loadCubeMap(const std::filesystem::path &front,
                                                const std::filesystem::path &back,
                                                const std::filesystem::path &left,
@@ -40,7 +46,7 @@ namespace engine {
         std::shared_ptr<Shader> loadShader(const std::filesystem::path &vertexPath,
                                            const std::filesystem::path &geometryPath,
                                            const std::filesystem::path &fragmentPath);
-        std::shared_ptr<Model> loadPrimitive(const std::filesystem::path path,
+        std::shared_ptr<Model> loadPrimitive(const std::filesystem::path& path,
                                                            PrimitiveShape shape,
                                                            std::shared_ptr<Shader> &shader);
 

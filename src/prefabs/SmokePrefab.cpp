@@ -19,7 +19,7 @@ void prefabs::smokePrefab(std::shared_ptr<engine::Model> &asset,
 
 void prefabs::smokePrefabLoader(std::shared_ptr<engine::Model> &outModel,
                                std::shared_ptr<engine::Shader> &outShader) {
-    auto smokeTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "perlin_noise_small.png");
+    auto smokeTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "perlin_noise.png");
     smokeTexture->configure_texture({
             .texture_wrap_s = engine::GLTextureRepeat::Repeat,
             .texture_wrap_t = engine::GLTextureRepeat::Repeat,

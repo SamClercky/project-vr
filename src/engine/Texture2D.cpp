@@ -16,8 +16,13 @@ Texture2D::Texture2D(uint8_t const *data, int width, int height, int nrChannels,
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(m_textureBind, m_textureID);
 
-    glTexImage2D(m_textureBind, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
+    if (nrChannels == 3)
+        glTexImage2D(m_textureBind, 0, GL_RGB, width, height, 0, GL_RGB,
+                     GL_UNSIGNED_BYTE, data);
+    else if (nrChannels == 4) // accommodate for alpha channel in png
+        glTexImage2D(m_textureBind, 0, GL_RGBA, width, height, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, data);
+
     glGenerateMipmap(m_textureBind);
 
     glBindTexture(m_textureBind, 0);
