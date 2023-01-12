@@ -8,14 +8,22 @@
 #include "engine/AssetManager.h"
 
 void prefabs::loadThrowableBulletPrefab(std::shared_ptr<engine::Model> &outModel, std::shared_ptr<engine::Shader> &outShader) {
+    auto bulletTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "sphere.png");
+    bulletTexture->configure_texture({
+            .texture_wrap_s = engine::GLTextureRepeat::IGNORE,
+            .texture_wrap_t = engine::GLTextureRepeat::IGNORE,
+            .texture_min_filter = engine::GLFilter::LINEAR,
+            .texture_mag_filter = engine::GLFilter::LINEAR,
+    });
     outShader = engine::GlobalAssetManager.loadShader(
-            RESOURCES_ROOT / "shaders" / "rabbit.vert",
-            RESOURCES_ROOT / "shaders" / "rabbit.frag"
+            RESOURCES_ROOT / "shaders" / "light.vert",
+            RESOURCES_ROOT / "shaders" / "light.frag"
             );
     outModel = engine::GlobalAssetManager.loadModel(
             RESOURCES_ROOT / "3dobj" / "sphere_smooth.obj",
             outShader
             );
+    outModel->meshes[0]->attachTexture(bulletTexture);
 }
 void prefabs::throwableBulletPrefab(entt::registry &registry,
                                     std::unique_ptr<btDiscreteDynamicsWorld> &world,

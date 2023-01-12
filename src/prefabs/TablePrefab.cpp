@@ -25,10 +25,10 @@ void prefabs::lightCubePrefab(std::shared_ptr<engine::Model> &asset,
 
 void prefabs::lightCubePrefabLoader(std::shared_ptr<engine::Model>& outModel,
     std::shared_ptr<engine::Shader>& outShader) {
-    auto cubeTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "container.jpg");
+    auto cubeTexture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "table_bake.png");
     cubeTexture->configure_texture({
-            .texture_wrap_s = engine::GLTextureRepeat::Repeat,
-            .texture_wrap_t = engine::GLTextureRepeat::Repeat,
+            .texture_wrap_s = engine::GLTextureRepeat::IGNORE,
+            .texture_wrap_t = engine::GLTextureRepeat::IGNORE,
             .texture_min_filter = engine::GLFilter::LINEAR,
             .texture_mag_filter = engine::GLFilter::LINEAR,
     });
