@@ -2,51 +2,12 @@
 #include "BulletCollision/CollisionShapes/btBoxShape.h"
 #include "BulletCollision/CollisionShapes/btCompoundShape.h"
 #include "components/CollisionObject.h"
-#include "components/DeltaTime.h"
 #include "engine/AssetManager.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-auto bulletBoundingBox = std::vector{
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ 0.5f, 0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ -0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ 0.5f, -0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, -0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{ -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, },
-        engine::Vertex{ 0.5f, 0.5f, -0.5f, 1.0f, 1.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ 0.5f, 0.5f, 0.5f, 1.0f, 0.0f, },
-        engine::Vertex{ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, },
-        engine::Vertex{-0.5f, 0.5f, -0.5f, 0.0f, 1.0f}};
-
 static std::shared_ptr<engine::Shader> shader;
-static std::shared_ptr<engine::Mesh> mesh;
+static std::shared_ptr<engine::Model> mesh;
 static std::shared_ptr<engine::Mesh> meshCircle;
 
 void drawBox(const btBoxShape* shape,
@@ -85,12 +46,7 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
                                                        RESOURCES_ROOT / "shaders" / "bullet_debug.geom",
                                                        RESOURCES_ROOT / "shaders" / "bullet_debug.frag");
     if (!mesh) {
-        mesh = std::make_shared<engine::Mesh>(
-                std::move(bulletBoundingBox),
-                std::vector<uint32_t>{},
-                std::vector<std::shared_ptr<engine::Texture2D>>{},
-                shader);
-        engine::GlobalAssetManager.submitMesh(RESOURCES_SRC_ROOT / "systems" / "bulletDebugDraw.cpp", mesh);
+        mesh = engine::GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "prefabs" / "bulletDebugDraw.cpp", engine::PrimitiveShape::Cube, shader);
     }
     if (!meshCircle) {
         auto model = engine::GlobalAssetManager.loadModel(RESOURCES_ROOT / "3dobj" / "sphere_low_poly.obj", shader);
@@ -111,14 +67,14 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
                 transform.getRotation().getZ()
         };
 
-        glm::vec3 translation{
+        glm::vec3 globalTranslation{
                 transform.getOrigin().getX(),
                 transform.getOrigin().getY(),
                 transform.getOrigin().getZ(),
         };
 
         if (const auto* boxShape = dynamic_cast<const btBoxShape*>(shape)) {
-            drawBox(boxShape, shader, mesh, globalOrientation, translation, guard);
+            drawBox(boxShape, shader, mesh->meshes[0], globalOrientation, globalTranslation, guard);
         } else if (const auto* compoundShape = dynamic_cast<const btCompoundShape*>(shape)) {
             // we only go 1 level deep as this atm is the only level we can go
             for (int i = 0; i < compoundShape->getNumChildShapes(); i++) {
@@ -131,12 +87,12 @@ void systems::bulletDebugDrawSystem(entt::registry &registry, engine::Renderer::
                             localTransform.getRotation().getZ()};
                     const auto orientation = glm::inverse(globalOrientation) * localOrientation * globalOrientation;
 
-                    const auto globalTransform = translation + glm::vec3{
+                    const auto translation = globalTranslation + glm::vec3{
                                                                        localTransform.getOrigin().getX(),
                                                                        localTransform.getOrigin().getY(),
                                                                        localTransform.getOrigin().getZ()
                                                                };
-                    drawBox(boxShapeChild, shader, mesh, orientation, globalTransform, guard);
+                    drawBox(boxShapeChild, shader, mesh->meshes[0], orientation, translation, guard);
                 }
             }
         }

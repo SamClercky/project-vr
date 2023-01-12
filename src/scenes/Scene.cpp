@@ -6,7 +6,6 @@
 #include "components/GameStateGlobals.h"
 #include "prefabs/CameraPrefab.h"
 #include "prefabs/CubeMapPrefab.h"
-#include "prefabs/CubePrefab.h"
 #include "prefabs/EnvironmentPrefab.h"
 #include "prefabs/LightScreenPrefab.h"
 #include "prefabs/PlayerPrefab.h"
