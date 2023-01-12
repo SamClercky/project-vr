@@ -86,7 +86,7 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
-    prefabs::paintingPrefab(m_registry, glm::vec3{0.f, 2.f / 2.5f + .5f, -12.2f}, glm::mat3{2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f});
+    prefabs::paintingPrefab(m_registry, glm::vec3{0.f, 2.f / 2.5f + .5f, 12.2f}, glm::mat3{2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f});
 
     prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);
