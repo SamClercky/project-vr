@@ -1,9 +1,9 @@
-#include "LightScreenPrefab.h"
-#include "engine/Model.h"
-#include <vector>
-#include "engine/AssetManager.h"
+#include "PaintingPrefab.h"
 #include "components/Position.h"
 #include "components/Renderable.h"
+#include "engine/AssetManager.h"
+#include "engine/Model.h"
+#include <vector>
 
 static std::shared_ptr<engine::Shader> shader;
 static std::shared_ptr<engine::Model> model;

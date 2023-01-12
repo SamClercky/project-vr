@@ -1,4 +1,4 @@
-#include "Table.h"
+#include "TablePrefab.h"
 
 #include "engine/Mesh.h"
 #include "engine/AssetManager.h"

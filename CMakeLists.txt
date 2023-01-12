@@ -62,12 +62,16 @@ set(PROJECT-SRC
         src/stl/std_image.cpp
 
         src/components/Camera.h
+        src/components/CollisionObject.h src/components/CollisionObject.cpp
         src/components/DeltaTime.h
+        src/components/FollowedByCamera.h
+        src/components/GameStateGlobals.h
+        src/components/Light.h
+        src/components/Material.h
         src/components/Position.h
         src/components/Renderable.h
         src/components/RotateAnimation.h
-        src/components/Material.h
-        src/components/Light.h
+        src/components/ShortLivedObject.h
 
         src/engine/AssetManager.h src/engine/AssetManager.cpp
         src/engine/Mesh.h src/engine/Mesh.cpp
@@ -78,33 +82,30 @@ set(PROJECT-SRC
         src/engine/Window.h src/engine/Window.cpp
 
         src/prefabs/CameraPrefab.h src/prefabs/CameraPrefab.cpp
-        src/prefabs/CubePrefab.h src/prefabs/CubePrefab.cpp
-        src/prefabs/RabbitPrefab.cpp src/prefabs/RabbitPrefab.h
-        src/prefabs/CubeMapPrefab.cpp src/prefabs/CubeMapPrefab.h
-        src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
-        src/prefabs/Table.h src/prefabs/Table.cpp
-        src/prefabs/SpotLightPrefab.h src/prefabs/SpotLightPrefab.cpp
+        src/prefabs/CubeMapPrefab.h src/prefabs/CubeMapPrefab.cpp
+        src/prefabs/PaintingPrefab.h src/prefabs/PaintingPrefab.cpp
+        src/prefabs/PlayerPrefab.h src/prefabs/PlayerPrefab.cpp
         src/prefabs/PointLightPrefab.h src/prefabs/PointLightPrefab.cpp
+        src/prefabs/RabbitPrefab.h src/prefabs/RabbitPrefab.cpp
+        src/prefabs/SmokePrefab.h src/prefabs/SmokePrefab.cpp
+        src/prefabs/SpotLightPrefab.h src/prefabs/SpotLightPrefab.cpp
+        src/prefabs/TablePrefab.h src/prefabs/TablePrefab.cpp
 
         src/scenes/Scene.h src/scenes/Scene.cpp
         
         src/systems/CameraSystem.h src/systems/CameraSystem.cpp
+        src/systems/bulletDebugDraw.h src/systems/bulletDebugDraw.cpp
+        src/systems/bulletSystem.h src/systems/bulletSystem.cpp
+        src/systems/DestroyFallOutOfWorldSystem.h src/systems/DestroyFallOutOfWorldSystem.cpp
         src/systems/DrawSystem.h src/systems/DrawSystem.cpp
+        src/prefabs/EnvironmentPrefab.h src/prefabs/EnvironmentPrefab.cpp
         src/systems/InputUpdaterSystem.h src/systems/InputUpdaterSystem.cpp
-        src/systems/RotateSystem.h src/systems/RotateSystem.cpp
-        src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
         src/systems/LightSystem.h src/systems/LightSystem.cpp
-        src/prefabs/EnvironmentPrefab.cpp src/prefabs/EnvironmentPrefab.h
-        src/components/CollisionObject.h src/components/CollisionObject.cpp
-        src/systems/bulletSystem.cpp src/systems/bulletSystem.h
-        src/systems/bulletDebugDraw.cpp src/systems/bulletDebugDraw.h
-        src/prefabs/ThrowableBulletPrefab.cpp src/prefabs/ThrowableBulletPrefab.h
-        src/systems/ThrowableBulletShooterSystem.cpp src/systems/ThrowableBulletShooterSystem.h
-        src/systems/DestroyFallOutOfWorldSystem.cpp src/systems/DestroyFallOutOfWorldSystem.h
-        src/components/ShortLivedObject.h src/prefabs/PlayerPrefab.cpp
-        src/prefabs/PlayerPrefab.h src/components/GameStateGlobals.h
-        src/components/FollowedByCamera.h
-        src/prefabs/LightScreenPrefab.cpp src/prefabs/LightScreenPrefab.h)
+        src/systems/RotateSystem.h src/systems/RotateSystem.cpp
+        src/prefabs/ThrowableBulletPrefab.h src/prefabs/ThrowableBulletPrefab.cpp
+        src/systems/ThrowableBulletShooterSystem.h src/systems/ThrowableBulletShooterSystem.cpp
+        src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
+        )
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)

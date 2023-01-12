@@ -1,5 +1,5 @@
-#ifndef PROJECT_VR_LIGHTSCREENPREFAB_H
-#define PROJECT_VR_LIGHTSCREENPREFAB_H
+#ifndef PROJECT_VR_PAINTINGPREFAB_H
+#define PROJECT_VR_PAINTINGPREFAB_H
 
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
@@ -8,4 +8,4 @@ namespace prefabs {
    void screenPrefab(entt::registry &registry, glm::vec3 position, glm::mat3 orientation);
 }
 
-#endif//PROJECT_VR_LIGHTSCREENPREFAB_H
+#endif//PROJECT_VR_PAINTINGPREFAB_H
