@@ -32,8 +32,10 @@ void prefabs::throwableBulletPrefab(entt::registry &registry,
                                     glm::vec3 position,
                                     glm::vec3 impulse) {
     const auto entity = registry.create();
-    registry.emplace<components::Position>(entity, position, .1f);
-    glm::vec3 size{0.2f};
+
+    float scale = 0.3f;
+    glm::vec3 size{1.6f*scale};
+    registry.emplace<components::Position>(entity, position, scale);
     const auto &cObject = registry.emplace<components::CollisionObject>(entity, components::collisionObject::cube(
                                                                   world,
                                                                   size,
