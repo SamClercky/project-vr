@@ -24,6 +24,7 @@
 #include "systems/ViewportUpdateSystem.h"
 #include "systems/bulletDebugDraw.h"
 #include "systems/bulletSystem.h"
+#include "systems/lightDebugDraw.h"
 
 using namespace scenes;
 
@@ -112,6 +113,8 @@ void Scene::render(engine::Renderer::RenderGuard &renderer) {
     systems::lightSystem(renderer, m_registry);
     systems::drawSystem(renderer, m_registry);
 
-    if (m_window_ref.is_key_pressed(engine::Window::ButtonDirections::Debug))
+    if (m_window_ref.is_key_pressed(engine::Window::ButtonDirections::Debug)) {
         systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
+        systems::lightDebugDrawSystem(m_registry, renderer);
+    }
 }

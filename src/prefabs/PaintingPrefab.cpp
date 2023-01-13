@@ -11,8 +11,8 @@ static std::shared_ptr<engine::Model> model;
 void prefabs::paintingPrefab(entt::registry &registry, glm::vec3 position, glm::mat3 orientation) {
     if (!shader)
         shader = engine::GlobalAssetManager.loadShader(
-                RESOURCES_ROOT / "shaders" / "painting.vert",
-                RESOURCES_ROOT / "shaders" / "painting.frag"
+                RESOURCES_ROOT / "shaders" / "light.vert",
+                RESOURCES_ROOT / "shaders" / "light.frag"
                 );
     if (!model) {
         auto texture = engine::GlobalAssetManager.loadTexture(RESOURCES_ROOT / "mc_painting.jpg", true, engine::TextureConfig {

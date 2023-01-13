@@ -108,7 +108,7 @@ set(PROJECT-SRC
         src/prefabs/ThrowableBulletPrefab.h src/prefabs/ThrowableBulletPrefab.cpp
         src/systems/ThrowableBulletShooterSystem.h src/systems/ThrowableBulletShooterSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
-        )
+        src/systems/lightDebugDraw.cpp src/systems/lightDebugDraw.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)
