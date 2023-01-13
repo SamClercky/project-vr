@@ -35,7 +35,7 @@
 
 \title{Project VR}
 \subtitle{Creating a game in OpenGL}
-\author{Andreas Declerck, Sven Degelean}
+\author{Andreas Declerck, Sven Degelaen}
 
 \faculty{Faculty of Science and Bio-Engineering: Computer science}
 
@@ -51,7 +51,12 @@ This document describes the implemented features in the OpenGL project for the
 course VR. The assigniment is to create a game in OpenGL with as many as possible
 interesting features.
 
-\TODO Insert image of finished game
+\begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{screenshot.png}
+      \caption{Screenshot of the final project}
+      \label{fig:screenshot}
+\end{figure}
 
 \section{Description of the game}
 
@@ -68,11 +73,18 @@ button can be used.
 
 Some debugging mechanics where also introduced to find more easily the
 boundingboxes used for the physics. On the gamepad this is B or I on a keyboard.
-Similarly a freecam option was introduced with button A on the gamepad and O on
+Similarly a freecam option was introduced with button X on the gamepad and O on
 a keyboard.
+Aside from moving around, the player can jump using the spacebar, or the A button on a gamepad. 
+For convenience, the window can also be put into fullscreen mode using the F11 key.
 
-\TODO Insert image of gamepad + functions
-
+\begin{figure}[h!]
+      \centering
+      \includegraphics[width=\textwidth]{diagram.png}
+      \caption{Keyboard and gamepad controls}
+      \label{fig:diagram}
+\end{figure}
+\newpage
 \section{Technical features}
 
 To make all of this work, certain special features where introduced. These
