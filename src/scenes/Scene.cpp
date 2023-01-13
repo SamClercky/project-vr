@@ -67,11 +67,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     //light test
     prefabs::pointLightPrefab(m_registry);
-    prefabs::spotLightPrefab(m_registry);
     glm::vec3 direction1 = glm::normalize(glm::vec3{1.f, -1.f, 1.f});
-    glm::vec3 direction2 = glm::normalize(glm::vec3{0.f, -1.f, 0.f});
-    prefabs::spotLightPrefab(m_registry, -direction1 * 3.f, direction1);
-    prefabs::spotLightPrefab(m_registry, -direction2 * 3.f, direction2);
+    glm::vec3 direction2 = glm::normalize(glm::vec3{1.f, -1.f, 0.f});
+    glm::vec3 direction3 = glm::normalize(glm::vec3{0.f, -1.f, 1.f});
+    prefabs::spotLightPrefab(m_registry, -direction1 * 12.f, direction1);
+    prefabs::spotLightPrefab(m_registry, -direction2 * 12.f, direction2);
+    prefabs::spotLightPrefab(m_registry, -direction3 * 6.f + glm::vec3{0.f, 0.f, 10.f}, direction3);
 
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
@@ -87,7 +88,9 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
-    prefabs::paintingPrefab(m_registry, glm::vec3{0.f, 2.f / 2.5f + .5f, 12.2f}, glm::mat3{2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f});
+    glm::mat3 orientation {2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f};
+    glm::vec3 position = glm::vec3{0.f, .5f, 12.2f};
+    prefabs::paintingPrefab(m_registry, orientation * position, orientation);
 
     prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);
