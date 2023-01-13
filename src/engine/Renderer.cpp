@@ -17,6 +17,9 @@ static std::shared_ptr<Shader> depthShader;
 static std::shared_ptr<Shader> postProcessingShader;
 static std::shared_ptr<Model> screenQuad;
 
+constexpr uint32_t LIGHT_WIDTH = 1024;
+constexpr uint32_t LIGHT_HEIGHT = 1024;
+
 Renderer::Renderer() : currFrame(), nextFrame() {
     postProcessingShader = GlobalAssetManager.loadShader(RESOURCES_ROOT / "shaders" / "post.vert", RESOURCES_ROOT / "shaders" / "post.frag");
     screenQuad = GlobalAssetManager.loadPrimitive(RESOURCES_SRC_ROOT / "engine" / "Renderer.cpp", PrimitiveShape::Quad, postProcessingShader);
@@ -27,21 +30,19 @@ Renderer::RenderGuard Renderer::startRender() {
 }
 
 void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm::mat4 &lightSpaceMatrix) {
-    const uint32_t LIGHT_WIDTH = 1024; // Should probably be parametrised in light?
-    const uint32_t LIGHT_HEIGHT = 1024;
 
     uint32_t depthFBO;
     glGenFramebuffers(1, &depthFBO);
 
     glBindTexture(GL_TEXTURE_2D, depthTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, LIGHT_WIDTH, LIGHT_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    float borderFullyLit[] = {1.f, 1.f, 1.f, 1.f};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderFullyLit); // set border to fully lit
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, LIGHT_WIDTH, LIGHT_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+//
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    float borderFullyLit[] = {1.f, 1.f, 1.f, 1.f};
+//    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderFullyLit); // set border to fully lit
 
     glBindFramebuffer(GL_FRAMEBUFFER, depthFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
@@ -108,6 +109,17 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         auto amount = currFrame.lights.size() - depthTextures.size();
         std::vector<GLuint> textures(amount, 0);
         glGenTextures((int)amount, textures.data());
+        for (auto texture: textures) {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, LIGHT_WIDTH, LIGHT_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            float borderFullyLit[] = {1.f, 1.f, 1.f, 1.f};
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderFullyLit); // set border to fully lit
+        }
         depthTextures.insert(depthTextures.end(), textures.begin(), textures.end());
     }
     if (currFrame.lights.size() > lightTransforms.size()) {
@@ -144,23 +156,23 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         shader->setFloat("time", static_cast<float>(glfwGetTime()));
         shader->setVec3f("viewPosition", glm::vec3{currFrame.view[3]});
 
-        for (uint32_t i = 0; i < currFrame.lights.size(); i++) {
+        for (int i = 0; i < currFrame.lights.size(); i++) {
             const auto &light = currFrame.lights[i];
-            shader->setVec3f(std::format("lights[{0}].position", i), light.position);
-            shader->setVec3f(std::format("lights[{0}].direction", i), light.direction);
+            shader->setVec3f("lights[{0}].position", i, light.position);
+            shader->setVec3f("lights[{0}].direction", i, light.direction);
 
-            shader->setVec3f(std::format("lights[{0}].ambient", i), light.ambient);
-            shader->setVec3f(std::format("lights[{0}].diffuse", i), light.diffuse);
-            shader->setVec3f(std::format("lights[{0}].specular", i), light.specular);
+            shader->setVec3f("lights[{0}].ambient", i, light.ambient);
+            shader->setVec3f("lights[{0}].diffuse", i, light.diffuse);
+            shader->setVec3f("lights[{0}].specular", i, light.specular);
 
-            shader->setFloat(std::format("lights[{0}].constant", i), light.constant);
-            shader->setFloat(std::format("lights[{0}].linear", i), light.linear);
-            shader->setFloat(std::format("lights[{0}].quadratic", i), light.quadratic);
+            shader->setFloat("lights[{0}].constant", i, light.constant);
+            shader->setFloat("lights[{0}].linear", i, light.linear);
+            shader->setFloat("lights[{0}].quadratic", i, light.quadratic);
 
-            shader->setMat4f(std::format("lights[{0}].lightTransform", i), lightTransforms[i]);
+            shader->setMat4f("lights[{0}].lightTransform", i, lightTransforms[i]);
 
-            shader->setFloat(std::format("lights[{0}].cutOff", i), light.cutOff);
-            shader->setFloat(std::format("lights[{0}].outerCutOff", i), light.outerCutOff);
+            shader->setFloat("lights[{0}].cutOff", i, light.cutOff);
+            shader->setFloat("lights[{0}].outerCutOff", i, light.outerCutOff);
         }
         shader->setInt("numLights", (int)currFrame.lights.size());
 
@@ -175,7 +187,7 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
             const int shadowLocation = (int)meshGuard.textures.size() + i;
             glActiveTexture(GL_TEXTURE0 + shadowLocation);
             glBindTexture(GL_TEXTURE_2D, depthTextures[i]);
-            shader->setInt(std::format("lights[{0}].shadowMap", i), shadowLocation);
+            shader->setInt("lights[{0}].shadowMap", i, shadowLocation);
         }
 
         meshGuard.draw();
