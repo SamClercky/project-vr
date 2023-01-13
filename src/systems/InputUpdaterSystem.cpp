@@ -49,8 +49,20 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
             auto &cObject = playerView.get<components::CollisionObject>(player);
             auto &position = playerView.get<components::Position>(player);
 
+            // handle horizontal movement
             if (glm::length(rotated_delta_pos) > 0.f) {
-                cObject.body->translate(10.f * dt.sec() * btVector3{rotated_delta_pos.x, 0.f, rotated_delta_pos.z});
+                auto displacement = 10.f * dt.sec() * btVector3{rotated_delta_pos.x, 0.f, rotated_delta_pos.z};
+
+                btVector3 rayFrom = btVector3{cam.position.x, cam.position.y, cam.position.z};
+                btVector3 rayTo = rayFrom + displacement;
+                btCollisionWorld::ClosestRayResultCallback rayResult{rayFrom, rayTo};
+                rayResult.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+                cObject.world->rayTest(rayFrom, rayTo, rayResult);
+                if (rayResult.hasHit()) { // make sure that if there is a hit, do not cross it
+                    displacement = lerp(btVector3{0.f, 0.f, 0.f}, displacement, rayResult.m_closestHitFraction) - displacement.normalize()*.6f;
+                }
+
+                cObject.body->translate(displacement);
             }
 
             // handle jumping
@@ -60,7 +72,7 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
             rayResult.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
             cObject.world->rayTest(rayFrom, rayTo, rayResult);
             if (rayResult.hasHit() && window.is_key_pressed(engine::Window::ButtonDirections::Jump))
-                cObject.body->applyCentralImpulse(btVector3{0.f, 1.f, 0.f});
+                cObject.body->applyCentralImpulse(btVector3{0.f, 50.f, 0.f});
 
             cam.position = position.get_translation();
         }

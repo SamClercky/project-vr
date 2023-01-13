@@ -41,7 +41,7 @@ void prefabs::throwableBulletPrefab(entt::registry &registry,
                                                                   size,
                                                                   position,
                                                                   glm::mat3{1.f},
-                                                                  0.2f), world.get());
+                                                                  10.f), world.get());
     cObject.applyImpulse(impulse);
     registry.emplace<components::Renderable>(entity, std::vector<std::shared_ptr<engine::Model>>{model}, shader);
     registry.emplace<components::ShortLivedObject>(entity, 10.f);
