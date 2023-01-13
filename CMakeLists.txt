@@ -31,6 +31,9 @@ target_include_directories(glad PUBLIC ${GLAD_INCLUDE})
 # Assimp
 set(BUILD_SHARED_LIBS OFF)
 set(ASSIMP_INSTALL OFF)
+set(ASSIMP_BUILD_ZLIB ON)
+set(ASSIMP_NO_EXPORT ON)
+set(ASSIMP_BUILD_OBJ_IMPORTER ON)
 add_subdirectory(3rdparty/assimp)
 
 # Bullet3
@@ -105,7 +108,7 @@ set(PROJECT-SRC
         src/prefabs/ThrowableBulletPrefab.h src/prefabs/ThrowableBulletPrefab.cpp
         src/systems/ThrowableBulletShooterSystem.h src/systems/ThrowableBulletShooterSystem.cpp
         src/systems/ViewportUpdateSystem.h src/systems/ViewportUpdateSystem.cpp
-        )
+        src/systems/lightDebugDraw.cpp src/systems/lightDebugDraw.h)
 
 # Project building
 add_definitions(-DGLFW_INCLUDE_NONE)
@@ -118,7 +121,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Add compiler warnings
 if (MSVC)
-    add_compile_options(/W4 /GR)
+    add_compile_options(/W4)
 else ()
     add_compile_options(-Wall -Wextra -pedantic)
 endif ()

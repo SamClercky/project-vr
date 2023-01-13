@@ -1,10 +1,11 @@
 #include "InputUpdaterSystem.h"
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 #include "components/Camera.h"
-#include "components/DeltaTime.h"
-#include "components/Position.h"
-#include "components/GameStateGlobals.h"
-#include "components/FollowedByCamera.h"
 #include "components/CollisionObject.h"
+#include "components/DeltaTime.h"
+#include "components/FollowedByCamera.h"
+#include "components/GameStateGlobals.h"
+#include "components/Position.h"
 
 void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &window) {
     glm::vec3 delta_pos{0.f};
@@ -48,9 +49,30 @@ void systems::inputUpdaterSystem(entt::registry &registry, engine::Window &windo
             auto &cObject = playerView.get<components::CollisionObject>(player);
             auto &position = playerView.get<components::Position>(player);
 
+            // handle horizontal movement
             if (glm::length(rotated_delta_pos) > 0.f) {
-                cObject.body->translate(10.f * dt.sec() * btVector3{rotated_delta_pos.x, rotated_delta_pos.y, rotated_delta_pos.z});
+                auto displacement = 10.f * dt.sec() * btVector3{rotated_delta_pos.x, 0.f, rotated_delta_pos.z};
+
+                btVector3 rayFrom = btVector3{cam.position.x, cam.position.y, cam.position.z};
+                btVector3 rayTo = rayFrom + displacement;
+                btCollisionWorld::ClosestRayResultCallback rayResult{rayFrom, rayTo};
+                rayResult.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+                cObject.world->rayTest(rayFrom, rayTo, rayResult);
+                if (rayResult.hasHit()) { // make sure that if there is a hit, do not cross it
+                    displacement = lerp(btVector3{0.f, 0.f, 0.f}, displacement, rayResult.m_closestHitFraction) - displacement.normalize()*.6f;
+                }
+
+                cObject.body->translate(displacement);
             }
+
+            // handle jumping
+            btVector3 rayFrom = btVector3{cam.position.x, cam.position.y-1.f, cam.position.z};
+            btVector3 rayTo = rayFrom + btVector3{0.f, -1.f, 0.f};
+            btCollisionWorld::ClosestRayResultCallback rayResult{rayFrom, rayTo};
+            rayResult.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+            cObject.world->rayTest(rayFrom, rayTo, rayResult);
+            if (rayResult.hasHit() && window.is_key_pressed(engine::Window::ButtonDirections::Jump))
+                cObject.body->applyCentralImpulse(btVector3{0.f, 50.f, 0.f});
 
             cam.position = position.get_translation();
         }

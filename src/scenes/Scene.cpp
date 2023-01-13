@@ -24,6 +24,7 @@
 #include "systems/ViewportUpdateSystem.h"
 #include "systems/bulletDebugDraw.h"
 #include "systems/bulletSystem.h"
+#include "systems/lightDebugDraw.h"
 
 using namespace scenes;
 
@@ -43,11 +44,11 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     m_dynamics_world = setup_physics();
 
     glm::vec3 cubePositions[] = {
-            /*glm::vec3(0.0f, 0.0f, 0.0f),*/ glm::vec3(2.0f, 5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3(2.4f, -0.4f, -3.5f), glm::vec3(-1.7f, 3.0f, -7.5f),
-            glm::vec3(1.3f, -2.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
-            glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
+            glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, 5.0f, -10.0f),
+            glm::vec3(-1.5f, 6.2f, -2.5f), glm::vec3(-3.8f, 1.f, -10.3f),
+            glm::vec3(2.4f, 1.0f, -3.5f), glm::vec3(-1.7f, 3.0f, -7.5f),
+            glm::vec3(1.3f, 4.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
+            glm::vec3(1.5f, 1.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     m_registry.ctx().emplace<components::DeltaTime>(0);
     m_registry.ctx().emplace<components::GameStateGlobals>();
@@ -66,11 +67,12 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
 
     //light test
     prefabs::pointLightPrefab(m_registry);
-    prefabs::spotLightPrefab(m_registry);
     glm::vec3 direction1 = glm::normalize(glm::vec3{1.f, -1.f, 1.f});
-    glm::vec3 direction2 = glm::normalize(glm::vec3{0.f, -1.f, 0.f});
-    prefabs::spotLightPrefab(m_registry, -direction1 * 3.f, direction1);
-    prefabs::spotLightPrefab(m_registry, -direction2 * 3.f, direction2);
+    glm::vec3 direction2 = glm::normalize(glm::vec3{1.f, -1.f, 0.f});
+    glm::vec3 direction3 = glm::normalize(glm::vec3{0.f, -1.f, 1.f});
+    prefabs::spotLightPrefab(m_registry, -direction1 * 12.f, direction1);
+    prefabs::spotLightPrefab(m_registry, -direction2 * 12.f, direction2);
+    prefabs::spotLightPrefab(m_registry, -direction3 * 6.f + glm::vec3{0.f, 0.f, 10.f}, direction3);
 
     std::shared_ptr<engine::Model> rabbitModel;
     std::shared_ptr<engine::Shader> rabbitShader;
@@ -86,7 +88,9 @@ Scene::Scene(engine::Window &window, engine::Renderer &renderer) : m_registry(en
     prefabs::cubeMapPrefabLoader(cubeMapModel, cubeMapShader);
     prefabs::cubeMapPrefab(cubeMapModel, cubeMapShader, m_registry);
 
-    prefabs::paintingPrefab(m_registry, glm::vec3{0.f, 2.f / 2.5f + .5f, -12.2f}, glm::mat3{2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f});
+    glm::mat3 orientation {2.5f, 0.f, 0.f, 0.f, 2.5f, 0.f, 0.f, 0.f, 1.f};
+    glm::vec3 position = glm::vec3{0.f, .5f, 12.2f};
+    prefabs::paintingPrefab(m_registry, orientation * position, orientation);
 
     prefabs::playerPrefab(m_registry, m_dynamics_world);
     prefabs::cameraPrefab(m_registry);
@@ -112,6 +116,8 @@ void Scene::render(engine::Renderer::RenderGuard &renderer) {
     systems::lightSystem(renderer, m_registry);
     systems::drawSystem(renderer, m_registry);
 
-    if (engine::Window::is_debug_mode())
+    if (m_window_ref.is_key_pressed(engine::Window::ButtonDirections::Debug)) {
         systems::bulletDebugDrawSystem(m_registry, renderer, m_dynamics_world);
+        systems::lightDebugDrawSystem(m_registry, renderer);
+    }
 }
