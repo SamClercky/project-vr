@@ -55,7 +55,8 @@ Notable features:
     * Specular light
 * Directional shadows: for both point- and spotlights with framebuffers where the scene is rerendered for every light with the possibility to exclude certain objects that do not cast a shadow.
 * Framebuffers postprocessing effect: periodically applies an edge detecting kernel function and adds a cross to help with aiming and uses inverted colors of the current frame for better visibilty of the cross.
+* Post-processing step with anti-alias filter: This is done by multisampling the game scene and taking an average of the different subsamples.
 * Ability to efficiently load and use external resources: by storing the path together with the requested resource, so duplicate calls return the same shared reference to the result.
 * Ephemeral objects: Bullets can become to much in a scene and degrade the performance, so a system was created to remove objects if they fall out of the world (y < -100). Additionally a system of ephimeral objects was created.  These objects have a time to live (ttl) after which, they are destroyed.
-* Ability to work with transparent (RGBA) and non-transparent (RGB) images and show them correctly
+* Ability to work with transparent (RGBA) and non-transparent (RGB) images and show them correctly (see windows in wall)
 * Gamma correction in a separate branch `gamma_correction`

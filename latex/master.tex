@@ -64,7 +64,7 @@ The game places the player in an environment where interesting effects can be
 observed. This while the player's vision gets distorted to make it more
 interesting.
 
-The player is constraint to physiscs like gravity and can interact with its
+The player is constraint to physics like gravity and can interact with its
 environment by colliding with its surrounding objects. A mechanic was added
 to make it possible to shoot little balls from the direction of where the
 player is looking. Player movement can be achieved with an XBox gamepad or with
@@ -75,7 +75,7 @@ Some debugging mechanics where also introduced to find more easily the
 boundingboxes used for the physics. On the gamepad this is B or I on a keyboard.
 Similarly a freecam option was introduced with button X on the gamepad and O on
 a keyboard.
-Aside from moving around, the player can jump using the spacebar, or the A button on a gamepad. 
+Aside from moving around, the player can jump using the spacebar, or the A button on a gamepad.
 For convenience, the window can also be put into fullscreen mode using the F11 key.
 
 \begin{figure}[h!]
@@ -122,6 +122,9 @@ contain:
             detecting kernel function and adds a cross to help with aiming and uses
             inverted colors of the current frame for better visibilty of the cross.
       \item Gamma correction in a separate branch \verb|gamma_correction|.
+      \item Post-processing step with anti-alias filter: This is done by
+            multisampling the game scene and taking an average of the different
+            subsamples.
       \item Ability to efficiently load and use external resources: by storing the
             path together with the requested resource, so duplicate calls return
             the same shared reference to the result.
@@ -131,7 +134,7 @@ contain:
             objects was created.  These objects have a time to live (ttl) after
             which, they are destroyed.
       \item Ability to work with transparent (RGBA) and non-transparent (RGB)
-            images and show them correctly
+            images and show them correctly (see windows in wall).
 \end{itemize}
 
 \section{Organisation of the code and external resources}
