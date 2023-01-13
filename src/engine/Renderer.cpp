@@ -35,14 +35,6 @@ void renderShadowsMaps(LightObject light, Frame &frame, GLint &depthTexture, glm
     glGenFramebuffers(1, &depthFBO);
 
     glBindTexture(GL_TEXTURE_2D, depthTexture);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, LIGHT_WIDTH, LIGHT_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-//
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    float borderFullyLit[] = {1.f, 1.f, 1.f, 1.f};
-//    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderFullyLit); // set border to fully lit
 
     glBindFramebuffer(GL_FRAMEBUFFER, depthFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
@@ -203,7 +195,7 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
         auto guard = screenQuad->meshes[0]->bind();
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColorBuffer);
 
         postProcessingShader->use();
         postProcessingShader->setFloat("time", static_cast<float>(glfwGetTime()));
@@ -216,6 +208,8 @@ void Renderer::render(uint32_t viewWidth, uint32_t viewHeight) {
 }
 
 void Renderer::viewportChanged(uint32_t viewWidth, uint32_t viewHeight) {
+    constexpr int numberOfSamples = 4;
+
     prevViewHeight = viewHeight;
     prevViewWidth = viewWidth;
 
@@ -232,18 +226,18 @@ void Renderer::viewportChanged(uint32_t viewWidth, uint32_t viewHeight) {
 
     // texture
     glGenTextures(1, &texColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (GLsizei)viewWidth, (GLsizei)viewHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColorBuffer);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numberOfSamples, GL_RGB, (GLsizei)viewWidth, (GLsizei)viewHeight, GL_TRUE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texColorBuffer, 0);
 
     // rbo
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, (GLsizei)viewWidth, (GLsizei)viewHeight);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, numberOfSamples, GL_DEPTH24_STENCIL8, (GLsizei)viewWidth, (GLsizei)viewHeight);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
